@@ -1,102 +1,55 @@
 import Image from "next/image";
+import Typewriter from "@/components/Typewriter";
 
 export default function Home() {
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div className="font-sans flex flex-col items-center justify-items-center min-h-screen w-full">
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+      <main className="flex flex-col row-start-2 items-center sm:items-start w-full relative z-10">
+        {/* 背景图片区域 */}
+        <div className="relative w-full h-full">
+          {/* 背景图片 */}
+          <div className="fixed inset-0 z-0">
             <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+              src="/imgs/index-bg-img-03.png"
+              alt="background"
+              fill
+              className="object-cover"
+              priority
+              quality={100}
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+          </div>
+        </div>
+        {/* 标题区域 */}
+        <div className="relative flex flex-col items-center justify-center gap-4 min-h-screen min-w-screen text-center text-white ">
+          {/* 主标题 */}
+          <h1 className="text-6xl font-bold">Welcome to Azuxa's BlogWorld</h1>
+          {/* 副标题 */}
+          <Typewriter
+            initialText="Not just a blog, but"
+            repeatedTextList={[" a notebook"," a showcase", " a ground", " a world"]}
+            initialTypingSpeed={120}
+            repeatedTypingSpeed={100}
+            gapInterval={2000}
+            loop={true}
+            deleteSpeed={60}
+            cursor="_"
+            cursorBlinkInterval={500}
+            className="text-3xl font-mono"
+          />
+          </div>
+        {/* 主要内容区 */}
+        <div className="relative flex flex-col items-center justify-center h-full w-full text-center bg-white w-full">
+          <h1 className="h-160 text-4xl font-bold">Azuxa's BlogWorld</h1>
         </div>
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+      <footer className="w-full h-16 bg-[#254889] row-start-3 flex gap-[24px] flex-wrap items-center justify-center relative z-10">
+        <span className="text-sm text-white font-semibold">
+          © {new Date().getFullYear()} Azuxa's BlogSpace. 保留所有权利.
+        </span>
+        <span className="text-xs text-gray-200">
+          由 Next.js & Tailwind CSS 强力驱动
+        </span>
       </footer>
     </div>
   );

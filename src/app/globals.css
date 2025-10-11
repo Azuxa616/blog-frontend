@@ -1,26 +1,50 @@
+/* 导入 Tailwind CSS 框架，提供实用的 CSS 类 */
 @import "tailwindcss";
 
+/* CSS 重置 - 防止页面宽度异常 */
+*,
+*::before,
+*::after {
+  box-sizing: border-box; /* 确保边框和内边距包含在元素宽度内 */
+}
+
+html, body {
+  width: 100%; /* 确保根元素不超出视口宽度 */
+  overflow-x: hidden; /* 防止横向滚动 */
+  margin: 0;
+  padding: 0;
+}
+
+/* 定义根级 CSS 自定义属性（变量）
+   这些变量可以在整个应用中使用，方便主题切换 */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #ffffff; /* 浅色主题背景色：白色 */
+  --foreground: #171717; /* 浅色主题前景色：深灰色 */
 }
 
+/* 配置 Tailwind CSS 主题变量
+   将自定义属性映射为 Tailwind 可以使用的主题变量 */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: var(--background); /* 背景色主题变量 */
+  --color-foreground: var(--foreground); /* 前景色主题变量 */
+  --font-sans: var(--font-geist-sans); /* 无衬线字体变量 */
+  --font-mono: var(--font-geist-mono); /* 等宽字体变量 */
 }
 
+/* 暗色主题媒体查询
+   当用户系统设置为暗色主题时自动应用 */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #0a0a0a; /* 暗色主题背景色：深黑色 */
+    --foreground: #ededed; /* 暗色主题前景色：浅灰色 */
   }
 }
 
+/* 全局 body 样式设置 */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--background); /* 使用主题背景色 */
+  color: var(--foreground); /* 使用主题前景色 */
+  font-family: Arial, Helvetica, sans-serif; /* 设置后备字体 */
+  width: 100%; /* 确保body宽度不超过视口 */
+  min-height: 100vh; /* 最小高度为视口高度 */
 }
