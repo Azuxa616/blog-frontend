@@ -48,3 +48,32 @@ body {
   width: 100%; /* 确保body宽度不超过视口 */
   min-height: 100vh; /* 最小高度为视口高度 */
 }
+
+/* 添加滚动和过渡优化 */
+html {
+  scroll-behavior: smooth;
+}
+
+/* 防止页面滚动时出现空白和弹性滚动 */
+body {
+  overscroll-behavior: none;
+}
+
+/* 自定义过渡动画类 */
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 500ms;
+}
+
+/* 自定义滚动条样式 */
+::-webkit-scrollbar {
+  width: 3px;
+  
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+  background: #6b6400fb;
+}

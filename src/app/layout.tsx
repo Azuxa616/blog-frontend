@@ -3,6 +3,8 @@ import type { Metadata } from "next"; // 导入 Next.js 元数据类型定义
 import { Geist, Geist_Mono } from "next/font/google"; // 导入 Google Fonts
 import "./globals.css"; // 导入全局样式文件
 import HeaderBar from "@/components/HeaderBar";
+import FooterBar from "@/components/FooterBar";
+import { PageProvider } from "@/contexts/PageContext";
 
 // 配置 Geist Sans 字体 - 主要用于正文字体
 const geistSans = Geist({
@@ -31,14 +33,16 @@ export default function RootLayout({
 }>) {
   return (
     // HTML 根元素，设置页面语言为英语
-    <html lang="en">
+    <html lang="zh-CN">
       {/* 页面主体，应用字体变量和抗锯齿样式 */}
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-w-screen `}
       >
-        <HeaderBar backgroundColor="transparent" />
-        {/* 动态插入子页面内容 */}
-        {children}
+        <PageProvider>
+          <HeaderBar />
+          {/* 动态插入子页面内容 */}
+          {children}
+        </PageProvider>
 
       </body>
     </html>
