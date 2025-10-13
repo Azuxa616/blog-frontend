@@ -2,6 +2,7 @@
 import Image from "next/image";
 import { useEffect, useRef, useCallback } from 'react'
 import Typewriter from "@/components/Typewriter";
+import BusinessCard from "@/components/BusinessCard";
 import FooterBar from "@/components/FooterBar";
 import { usePage } from "@/contexts/PageContext";
 
@@ -163,8 +164,9 @@ export default function Home() {
 
         {/* 主要内容区 */}
         {isExpanded && (
-          <div className="relative flex flex-col items-center justify-center h-screen w-full text-center bg-white">
+          <div className="relative flex flex-col items-center justify-center h-screen w-full text-center bg-[#fffeee]">
             <h1 className="h-160 text-4xl font-bold">Azuxa's BlogWorld</h1>
+            <BusinessCard />
           </div>
         )}
       </main>
