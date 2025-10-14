@@ -4,8 +4,10 @@ import { useEffect, useRef, useCallback } from 'react'
 import Typewriter from "@/components/Typewriter";
 import BusinessCard from "@/components/BusinessCard";
 import FooterBar from "@/components/FooterBar";
+import WebStatisticDataCard from "@/components/WebStatisticDataCard";
+import BlogItem from "@/components/BlogItem";
 import { usePage } from "@/contexts/PageContext";
-
+import { mockBlogData } from "@/lib/mockData";
 //背景图片下拉箭头动画
 const ArrowAnimation = ({ onClick }: { onClick: () => void }) => {
   return (
@@ -22,7 +24,8 @@ const ArrowAnimation = ({ onClick }: { onClick: () => void }) => {
     </div>
   )
 }
-
+// 网站统计数据（已在组件中设置默认值，这里可以根据需要传入具体数值）
+// 如果不需要自定义，可以直接使用 <WebStatisticDataCard />
 
 
 export default function Home() {
@@ -164,9 +167,28 @@ export default function Home() {
 
         {/* 主要内容区 */}
         {isExpanded && (
-          <div className="relative flex flex-col items-center justify-center h-screen w-full text-center bg-[#fffeee]">
+          <div className="relative flex flex-col items-center justify-center  w-full text-center bg-[#fffeee]">
             <h1 className="h-160 text-4xl font-bold">Azuxa's BlogWorld</h1>
             <BusinessCard />
+            <WebStatisticDataCard />
+            {/* 博客列表 */}
+            <div className="w-full max-w-4xl px-4 py-8">
+              <h2 className="text-2xl font-bold text-gray-800 mb-6">最新博客</h2>
+              <div className="flex flex-col gap-4">
+                {mockBlogData.map((blog, index) => (
+                  <BlogItem
+                    key={index}
+                    layout={blog.layout}
+                    coverImage={blog.coverImage}
+                    title={blog.title}
+                    description={blog.description}
+                    category={blog.category}
+                    publishDate={blog.publishDate}
+                    viewCount={blog.viewCount}
+                  />
+                ))}
+              </div>
+            </div>
           </div>
         )}
       </main>
