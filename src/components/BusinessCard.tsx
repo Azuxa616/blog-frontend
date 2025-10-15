@@ -8,18 +8,16 @@ export default function BusinessCard() {
             {/* 内容区域 */}
             <div className="flex flex-col items-center gap-6">
                 {/* 头像区域 */}
-                <div className="relative ">
-                    <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center shadow-lg">
-                        <Avatar width={80} height={80} />
+                <div className="relative -mt-24">
+                    <div className="w-32 h-32 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center shadow-lg">
+                        <Avatar src="/imgs/avatar.jpg" width={120} height={120} />
                     </div>
-                    {/* 装饰环 */}
-                    <div className="absolute inset-0 rounded-full border-2 border-white/60 shadow-sm"></div>
                 </div>
 
                 {/* 姓名 */}
                 <div className="text-center">
                     <h3 className="text-2xl font-bold text-gray-800 mb-1">Azuxa616</h3>
-                    <p className="text-sm text-gray-500">Frontend Developer</p>
+                    <p className="text-sm text-gray-500">2226123739@qq.com</p>
                 </div>
 
                 {/* GitHub 按钮 */}
