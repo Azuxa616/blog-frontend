@@ -165,14 +165,21 @@ export default function Home() {
         </div>
 
 
+
+
         {/* 主要内容区 */}
         {isExpanded && (
-          <div className="relative flex flex-col items-center justify-center  w-full text-center bg-[#fffeee]">
-            <h1 className="h-160 text-4xl font-bold">Azuxa's BlogWorld</h1>
-            <BusinessCard />
-            <WebStatisticDataCard />
-            {/* 博客列表 */}
-            <div className="w-full max-w-4xl px-4 py-8">
+          <div className="relative flex items-start justify-center w-full text-center gap-8 bg-[#fffeee]">
+
+            {/* 侧边栏 - 固定定位 */}
+            {isExpanded && (
+              <div className="flex flex-col gap-8  mt-30">
+                  <BusinessCard />
+                  <WebStatisticDataCard />
+              </div>
+            )}
+            {/* 博客列表 - 居中显示，主要内容区域 */}
+            <div className="w-full max-w-4xl px-4 py-8 ">
               <h2 className="text-2xl font-bold text-gray-800 mb-6">最新博客</h2>
               <div className="flex flex-col gap-4">
                 {mockBlogData.map((blog, index) => (
@@ -192,7 +199,7 @@ export default function Home() {
           </div>
         )}
       </main>
-        {isExpanded && <FooterBar />}
+      {isExpanded && <FooterBar />}
     </div>
   );
 }
