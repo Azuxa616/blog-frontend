@@ -5,6 +5,8 @@ import "./globals.css"; // 导入全局样式文件
 import HeaderBar from "@/components/HeaderBar";
 import FooterBar from "@/components/FooterBar";
 import { PageProvider } from "@/contexts/PageContext";
+import { DarkModeProvider } from "@/contexts/DarkModeContext";
+import FloatingActionButton from "@/components/FloatingActionButton";
 
 // 配置 Geist Sans 字体 - 主要用于正文字体
 const geistSans = Geist({
@@ -38,11 +40,15 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-w-screen `}
       >
-        <PageProvider>
-          <HeaderBar />
-          {/* 动态插入子页面内容 */}
-          {children}
-        </PageProvider>
+        <DarkModeProvider>
+          <PageProvider>
+            <HeaderBar />
+            {/* 动态插入子页面内容 */}
+            {children}
+            {/* 全局浮动操作按钮 */}
+            <FloatingActionButton />
+          </PageProvider>
+        </DarkModeProvider>
 
       </body>
     </html>

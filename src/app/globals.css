@@ -20,6 +20,16 @@ html, body {
 :root {
   --background: #ffffff; /* 浅色主题背景色：白色 */
   --foreground: #171717; /* 浅色主题前景色：深灰色 */
+  --primary: #254889; /* 主色调 */
+  --secondary: #6b6400fb; /* 次色调 */
+}
+
+/* 暗色主题样式 */
+.dark {
+  --background: #0a0a0a; /* 暗色主题背景色：深黑色 */
+  --foreground: #ededed; /* 暗色主题前景色：浅灰色 */
+  --primary: #3b82f6; /* 暗色主题主色调：蓝色 */
+  --secondary: #fbbf24; /* 暗色主题次色调：黄色 */
 }
 
 /* 配置 Tailwind CSS 主题变量
