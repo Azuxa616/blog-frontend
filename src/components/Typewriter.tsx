@@ -80,11 +80,10 @@ export default function Typewriter({
                 break
 
             case 'waiting':
-                setIsDeleting(prev => !prev)
                 if (repeatedTextList.length > 0) {
                     const timer = setTimeout(() => {
                         setPhase(isDeleting ? 'deleting' : 'typing')
-
+                        setIsDeleting(prev => !prev)
                     }, gapInterval)
                     return () => clearTimeout(timer)
                 }
