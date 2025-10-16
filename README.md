@@ -5,7 +5,6 @@
 ## ✨ 项目特色
 
 - 🎨 **现代化设计** - 使用 TailwindCSS 构建的美观界面
-- ⌨️ **打字机效果** - 自定义 Typewriter 组件实现动态文字效果
 - 📱 **响应式布局** - 完美适配桌面和移动设备
 - ⚡ **高性能** - 基于 Next.js 15 和 Turbopack 的快速构建
 - 🔧 **TypeScript** - 完整的类型安全支持
@@ -102,22 +101,6 @@ yarn lint
 pnpm lint
 ```
 
-## 🎯 主要功能
-
-### 🏠 首页
-- 全屏背景图片展示
-- 动态打字机效果标题
-- 响应式设计布局
-
-### 👤 关于页面
-- 个人介绍页面
-- 简洁现代的设计
-
-### ⌨️ Typewriter 组件
-- 高度可定制的打字机效果
-- 支持初始文本和循环文本
-- 可配置打字速度、删除速度、光标样式等
-
 ## 🚀 部署
 
 ### Vercel 部署（推荐）
@@ -133,16 +116,6 @@ pnpm lint
 - **Render**
 - **自托管服务器**
 
-## 🤝 贡献
-
-欢迎提交 Issue 和 Pull Request！
-
-1. Fork 本仓库
-2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
-3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
-4. 推送到分支 (`git push origin feature/AmazingFeature`)
-5. 创建 Pull Request
-
 ## 📄 许可证
 
 本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情。
@@ -154,6 +127,3 @@ pnpm lint
 - [React](https://react.dev/) - 用户界面库
 - [TypeScript](https://www.typescriptlang.org/) - 类型系统
 
----
-
-由 ❤️ 和 ☕ 驱动 | © 2025 Azuxa's BlogSpace. 保留所有权利.
