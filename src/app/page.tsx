@@ -25,26 +25,13 @@ const ArrowAnimation = ({ onClick }: { onClick: () => void }) => {
   )
 }
 // 网站统计数据（已在组件中设置默认值，这里可以根据需要传入具体数值）
-// 如果不需要自定义，可以直接使用 <WebStatisticDataCard />
+
 
 
 export default function Home() {
   const { isExpanded, setIsExpanded, isTransitioning, setIsTransitioning } = usePage()
 
-  const mainRef = useRef<HTMLDivElement>(null)
-  const lastScrollY = useRef(0)
   const throttleTimer = useRef<NodeJS.Timeout>(null)
-
-
-  //节流函数
-  const throttle = useCallback((func: Function, delay: number) => {
-    if (throttleTimer.current) {
-      clearTimeout(throttleTimer.current)
-    }
-    throttleTimer.current = setTimeout(() => {
-      func()
-    }, delay)
-  }, [])
 
   // 展开页面函数
   const expandPage = useCallback(() => {
@@ -62,7 +49,7 @@ export default function Home() {
         setIsTransitioning(false);
       }, 100);
     }
-  }, [isExpanded, isTransitioning]);
+  }, [isExpanded, isTransitioning, setIsExpanded, setIsTransitioning]);
 
   // 折叠页面函数
   const collapsePage = useCallback(() => {
@@ -80,7 +67,7 @@ export default function Home() {
         setIsTransitioning(false);
       }, 100);
     }
-  }, [isExpanded, isTransitioning]);
+  }, [isExpanded, isTransitioning, setIsExpanded, setIsTransitioning]);
 
 
   //处理滚轮事件
@@ -142,7 +129,7 @@ export default function Home() {
           {/* 标题区域 */}
           <div className="relative flex flex-col items-center justify-center gap-4 min-h-screen min-w-screen text-center text-white ">
             {/* 主标题 */}
-            <h1 className="text-6xl font-bold">Welcome to Azuxa's BlogWorld</h1>
+            <h1 className="text-6xl font-bold">Welcome to Azuxa&apos;s BlogWorld</h1>
             {/* 副标题 */}
             <Typewriter
               initialText="Not just a blog, but"

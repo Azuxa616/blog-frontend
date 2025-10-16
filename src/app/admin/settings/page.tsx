@@ -1,11 +1,12 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 
 // 模拟配置数据
 const initialSettings = {
   site: {
-    name: 'Azuxa\'s BlogSpace',
+    name: 'Azuxa&apos;s BlogSpace',
     description: '欢迎来到我的个人博客空间，这里分享技术见解和生活感悟。',
     keywords: '博客,技术,前段开发,React,Next.js',
     logo: '/imgs/avatar.jpg',
@@ -30,7 +31,7 @@ export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState<'site' | 'features' | 'personal'>('site')
   const [saving, setSaving] = useState(false)
 
-  const updateSettings = (section: keyof Settings, field: string, value: any) => {
+  const updateSettings = (section: keyof Settings, field: string, value: string | boolean) => {
     setSettings(prev => ({
       ...prev,
       [section]: {
@@ -147,12 +148,15 @@ export default function SettingsPage() {
                     />
                     {settings.site.logo && (
                       <div className="mt-2">
-                        <img
+                        <Image
                           src={settings.site.logo}
                           alt="站点Logo预览"
-                          className="w-16 h-16 object-cover rounded-lg border"
+                          width={64}
+                          height={64}
+                          className="object-cover rounded-lg border"
                           onError={(e) => {
-                            e.currentTarget.style.display = 'none'
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
                           }}
                         />
                       </div>

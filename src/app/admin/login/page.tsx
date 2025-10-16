@@ -92,7 +92,7 @@ export default function LoginPage() {
 
           {/* 底部信息 */}
           <div className="mt-8 text-center text-sm text-gray-500">
-            <p>© 2025 Azuxa's BlogSpace</p>
+            <p>© 2025 Azuxa&apos;s BlogSpace</p>
           </div>
         </div>
       </div>

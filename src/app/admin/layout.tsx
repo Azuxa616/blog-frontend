@@ -71,7 +71,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                     {/* 侧边栏底部 */}
                     <div className="p-4 border-t border-gray-200">
                         <div className="text-xs text-gray-500 text-center">
-                            © 2025 Azuxa's BlogSpace
+                            © 2025 Azuxa&apos;s BlogSpace
                         </div>
                     </div>
                 </div>

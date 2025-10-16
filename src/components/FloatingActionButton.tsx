@@ -5,13 +5,11 @@ import { useDarkMode } from '@/contexts/DarkModeContext';
 export default function FloatingActionButton() {
   const { isDarkMode, toggleDarkMode } = useDarkMode();
   const [isVisible, setIsVisible] = useState(false);
-  const [scrollY, setScrollY] = useState(0);
 
   // 监听滚动事件，控制组件显示/隐藏
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      setScrollY(currentScrollY);
 
       // 当视窗处于顶部时隐藏，否则显示
       setIsVisible(currentScrollY > 0);

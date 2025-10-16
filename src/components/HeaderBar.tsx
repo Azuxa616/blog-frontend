@@ -23,7 +23,7 @@ export default function HeaderBar() {
 
   return (
     <div className={`${baseClasses} ${variantClasses}`}>
-        <div className='text-xl font-bold'>Azuxa's BlogSpace</div>
+        <div className='text-xl font-bold'>Azuxa&apos;s BlogSpace</div>
         <div className='flex items-center gap-4'>
             {menuItems.map((item) => (
                 <MenuButton key={item.href} href={item.href} textColor={isExpanded ? 'black' : 'white'}>{item.label}</MenuButton>

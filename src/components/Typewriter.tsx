@@ -137,6 +137,7 @@ export default function Typewriter({
         gapInterval,
         deleteSpeed,
         loop,
+        isDeleting,
         getCurrentTargetText
     ])
 
