@@ -42,3 +42,15 @@ next-env.d.ts
 
 # docs
 /docs
+
+.idea
+.vscode
+
+# database
+*.db
+*.db-shm
+*.db-wal
+data/blog.db
+data/blog.db-shm
+data/blog.db-wal
+

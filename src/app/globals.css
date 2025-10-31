@@ -67,6 +67,7 @@ html {
 /* 防止页面滚动时出现空白和弹性滚动 */
 body {
   overscroll-behavior: none;
+  background-color: #fffeee;
 }
 
 /* 自定义过渡动画类 */
@@ -79,11 +80,24 @@ body {
 /* 自定义滚动条样式 */
 ::-webkit-scrollbar {
   width: 3px;
-  
+
 }
 ::-webkit-scrollbar-track {
   background: #f1f1f1;
 }
 ::-webkit-scrollbar-thumb {
   background: #6b6400fb;
+}
+
+/* 文章页面交互组件样式 */
+.progress-bar {
+  width: 0%;
+}
+
+.back-to-top {
+  display: none;
+}
+
+.back-to-top:not(.hidden) {
+  display: flex;
 }

@@ -11,7 +11,6 @@ export interface User extends BaseEntity {
   lastLoginAt?: Date;
 }
 
-// UserRole枚举已废弃 - 网站只有站长一个用户
 
 export interface CreateUserRequest {
   username: string;

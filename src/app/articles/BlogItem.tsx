@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+'use client'
+
 import Image from "next/image";
+import { useState, useEffect } from "react";
 
 interface BlogItemProps {
-    layout: "normal" | "reverse";
     coverImage: string;
     title: string;
     description: string;
@@ -12,37 +13,50 @@ interface BlogItemProps {
 }
 
 const CoverImageWrapper = ({ coverImageUrl, title }: { coverImageUrl: string, title: string }) => {
-    return (<div className="w-1/3 h-60 overflow-hidden relative rounded-lg">
-        <Image
-            src={coverImageUrl}
-            alt={title}
-            fill
-            className="object-cover"
-        />
-    </div>)
+    const [currentSrc, setCurrentSrc] = useState(coverImageUrl || '/imgs/404.jpg');
+    const fallbackSrc = '/imgs/404.jpg';
+
+    // 当coverImageUrl变化时，重置currentSrc
+    useEffect(() => {
+        setCurrentSrc(coverImageUrl || fallbackSrc);
+    }, [coverImageUrl]);
+
+    const handleImageError = () => {
+        if (currentSrc !== fallbackSrc) {
+            setCurrentSrc(fallbackSrc);
+        }
+    };
+
+    return (
+        <div className="w-1/3 h-60 overflow-hidden relative rounded-lg">
+            <Image
+                src={currentSrc}
+                alt={title}
+                fill
+                className="object-cover"
+                onError={handleImageError}
+            />
+        </div>
+    );
 }
 
 
 export default function BlogItem({
-    layout = "normal",
-    coverImage = "/imgs/404.jpg",
+    coverImage = "",
     title = "Untitled",
     description = "No description",
     category = "未分类",
     publishDate = "未知时间",
     viewCount = 0
 }: BlogItemProps) {
-    const [isReverse, setIsReverse] = useState(false);
-    useEffect(() => {
-        setIsReverse(layout === "reverse");
-    }, [layout]);
-
+    console.log('title', title);
+    console.log('coverImage', coverImage);
     return (
         <div className={`min-h-60 bg-white/80 backdrop-blur-sm border border-white/20 shadow-xl rounded-2xl  hover:shadow-2xl transition-all duration-300 flex min-w-96 justify-between items-center  gap-4`}>
 
 
             {/* 封面图片 */}
-            {!isReverse && <CoverImageWrapper coverImageUrl={coverImage} title={title} />}
+            <CoverImageWrapper coverImageUrl={coverImage} title={title} />
 
             {/* 内容区域 */}
             <div className="flex flex-col flex-1 gap-3 justify-center items-start h-full mx-5">
@@ -80,9 +94,6 @@ export default function BlogItem({
                     )}
                 </div>
             </div>
-            {/* 封面图片 (reverse)*/}
-            {isReverse && <CoverImageWrapper coverImageUrl={coverImage} title={title} />}
-
         </div>
     )
 

@@ -11,7 +11,7 @@ export type ArticleApiResponse = ApiResponse<Article>;
 export type ArticlesApiResponse = PaginatedResponse<Article>;
 export type CategoryApiResponse = ApiResponse<Category>;
 export type CategoriesApiResponse = ApiResponse<Category[]>;
-// 评论相关API类型已移除 - 评论系统使用第三方服务
+
 
 // API 请求类型
 export type LoginApiRequest = LoginRequest;

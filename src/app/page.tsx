@@ -5,9 +5,8 @@ import Typewriter from "@/components/Typewriter";
 import BusinessCard from "@/components/BusinessCard";
 import FooterBar from "@/components/FooterBar";
 import WebStatisticDataCard from "@/components/WebStatisticDataCard";
-import BlogItem from "@/components/BlogItem";
+import BlogItem from "@/app/articles/BlogItem";
 import { usePage } from "@/contexts/PageContext";
-import { mockBlogData } from "@/lib/mockData";
 //背景图片下拉箭头动画
 const ArrowAnimation = ({ onClick }: { onClick: () => void }) => {
   return (
@@ -17,7 +16,7 @@ const ArrowAnimation = ({ onClick }: { onClick: () => void }) => {
         alt="background"
         className="object-cover"
         priority
-        quality={200}
+        quality={100}
         width={40}
         height={40}
       />
@@ -156,7 +155,8 @@ export default function Home() {
 
         {/* 主要内容区 */}
         {isExpanded && (
-          <div className="relative flex items-start justify-center w-full text-center gap-8 bg-[#fffeee]">
+          <div className="relative flex items-start justify-center w-full text-center gap-8 
+          bg-[#fffeee]">
 
             {/* 侧边栏 - 固定定位 */}
             {isExpanded && (
@@ -165,24 +165,7 @@ export default function Home() {
                   <WebStatisticDataCard />
               </div>
             )}
-            {/* 博客列表 - 居中显示，主要内容区域 */}
-            <div className="w-full max-w-4xl px-4 py-8 ">
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">最新博客</h2>
-              <div className="flex flex-col gap-4">
-                {mockBlogData.map((blog, index) => (
-                  <BlogItem
-                    key={index}
-                    layout={blog.layout}
-                    coverImage={blog.coverImage}
-                    title={blog.title}
-                    description={blog.description}
-                    category={blog.category}
-                    publishDate={blog.publishDate}
-                    viewCount={blog.viewCount}
-                  />
-                ))}
-              </div>
-            </div>
+
           </div>
         )}
       </main>

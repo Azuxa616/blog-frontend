@@ -6,8 +6,18 @@ const nextConfig: NextConfig = {
   
   // 图片优化配置
   images: {
-    domains: ['localhost'],
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+      },
+      {
+        protocol: 'https',
+        hostname: 'localhost',
+      },
+    ],
     formats: ['image/webp', 'image/avif'],
+    qualities: [100, 75], // 质量值范围：1-100
   },
   
   // 重写规则

@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { useDarkMode } from '@/contexts/DarkModeContext';
+import { useDarkMode } from '../contexts/DarkModeContext';
 
 export default function FloatingActionButton() {
   const { isDarkMode, toggleDarkMode } = useDarkMode();

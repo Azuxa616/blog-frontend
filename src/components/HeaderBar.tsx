@@ -2,12 +2,13 @@
 'use client'
 import React from 'react'
 import MenuButton from './MenuButton'
-import { usePage } from '@/contexts/PageContext'
+import { usePage } from '../contexts/PageContext'
 
 
 
 const menuItems = [
     { href: "/", label: "首页" },
+    { href: "/articles", label: "文章" },
     { href: "/about", label: "关于" },
     { href: "/links", label: "友链" },
 ]

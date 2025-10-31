@@ -2,7 +2,7 @@
 import type { Metadata } from "next"; // 导入 Next.js 元数据类型定义
 import { Geist, Geist_Mono } from "next/font/google"; // 导入 Google Fonts
 import "./globals.css"; // 导入全局样式文件
-import RootLayoutClient from "@/app/components/RootLayoutClient";
+import RootLayoutClient from "@/components/RootLayoutClient";
 
 // 配置 Geist Sans 字体 - 主要用于正文字体
 const geistSans = Geist({

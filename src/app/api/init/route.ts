@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { initializeStorage } from '@/lib/storage/init';
-import { ResponseUtils } from '@/lib/utils/middleware';
-import { logRequest, withErrorHandling } from '@/lib/utils/helpers';
+import { initializeStorage } from '../../../lib/storage';
+import { ResponseUtils } from '../../../lib/utils/middleware';
+import { logRequest, withErrorHandling } from '../../../lib/utils/helpers';
 
 // 初始化存储系统
 export const POST = withErrorHandling(async (req: NextRequest) => {

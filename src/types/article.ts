@@ -1,7 +1,28 @@
 import { BaseEntity } from './common';
-import { User } from './auth';
+import { Category } from './category';
+import { Tag } from './tag';
 
 // 文章相关类型
+
+/**
+ * 文章元数据默认值接口
+ * 用于文章导入时的默认值设置
+ */
+export interface ArticleDefaults {
+  title?: string;
+  slug?: string;
+  excerpt?: string;
+  coverImage?: string;
+  status?: ArticleStatus;
+  publishedAt?: string;
+  author?: string;
+  tagNames?: string[];  // 标签名称数组（用于导入时的默认标签）
+  categoryId?: string;
+  isRepost?: boolean;
+  originalAuthor?: string;
+  originalLink?: string;
+  viewCount?: number;
+}
 export interface Article extends BaseEntity {
   title: string;            //标题
   slug: string;             //slug
@@ -11,9 +32,8 @@ export interface Article extends BaseEntity {
   status: ArticleStatus;    //状态
   publishedAt?: string;     //发布时间 (ISO字符串格式)
   viewCount: number;        //浏览量
-  likeCount: number;        //点赞数
   categoryId: string;       //分类ID
-  tags?: string[];          //标签数组（简化版，去除了关联对象）
+  tags?: string[];       //标签名称数组
   readTime?: number;        //阅读时间
 
   // 转载相关字段
@@ -30,6 +50,8 @@ export interface Article extends BaseEntity {
   };
 }
 
+
+
 export enum ArticleStatus {
   DRAFT = 'DRAFT',//草稿
   PUBLISHED = 'PUBLISHED',//已发布
@@ -43,7 +65,7 @@ export interface CreateArticleRequest {
   excerpt?: string;
   coverImage?: string;
   categoryId: string;
-  tagIds?: string[];
+  tagNames?: string[];
   status?: ArticleStatus;
 
   // 转载相关字段
@@ -58,7 +80,7 @@ export interface UpdateArticleRequest {
   excerpt?: string;
   coverImage?: string;
   categoryId?: string;
-  tagIds?: string[];
+  tagNames?: string[];
   status?: ArticleStatus;
 
   // 转载相关字段
@@ -74,49 +96,6 @@ export interface ArticleQueryParams {
   search?: string;
   page?: number;
   limit?: number;
-  sortBy?: 'createdAt' | 'publishedAt' | 'viewCount' | 'likeCount';
+  sortBy?: 'createdAt' | 'publishedAt' | 'viewCount';
   sortOrder?: 'asc' | 'desc';
 }
-
-// 分类相关类型
-export interface Category extends BaseEntity {
-  name: string;                   //名称
-  slug: string;                   //slug
-  description?: string;           //描述
-  color?: string;                 //颜色
-  articleCount: number;           //文章数量
-}
-
-export interface CreateCategoryRequest {
-  name: string;
-  description?: string;
-  color?: string;
-  icon?: string;
-}
-
-export interface UpdateCategoryRequest {
-  name?: string;
-  description?: string;
-  color?: string;
-  icon?: string;
-}
-
-// 标签相关类型
-export interface Tag extends BaseEntity {
-  name: string;
-  slug: string;
-  color?: string;
-  articleCount: number;
-}
-
-export interface CreateTagRequest {
-  name: string;
-  color?: string;
-}
-
-export interface UpdateTagRequest {
-  name?: string;
-  color?: string;
-}
-
-// 评论相关类型已移除 - 评论系统使用第三方服务
