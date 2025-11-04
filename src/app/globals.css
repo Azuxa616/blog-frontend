@@ -6,6 +6,12 @@
 *::before,
 *::after {
   box-sizing: border-box; /* 确保边框和内边距包含在元素宽度内 */
+  /* 为主题变量添加过渡效果，使主题切换更平滑 */
+  transition: background-color 0.3s ease-in-out, 
+              color 0.3s ease-in-out, 
+              border-color 0.3s ease-in-out,
+              width 0.3s ease-in-out,
+              height 0.3s ease-in-out;
 }
 
 html, body {
@@ -18,18 +24,24 @@ html, body {
 /* 定义根级 CSS 自定义属性（变量）
    这些变量可以在整个应用中使用，方便主题切换 */
 :root {
-  --background: #ffffff; /* 浅色主题背景色：白色 */
+  --background: #fffeee; /* 浅色主题背景色：米白色 */
   --foreground: #171717; /* 浅色主题前景色：深灰色 */
-  --primary: #254889; /* 主色调 */
-  --secondary: #6b6400fb; /* 次色调 */
+  --primary: #254889; /* 主色调：深蓝色 */
+  --secondary: #8b7500; /* 次色调：修正为纯色，橄榄金色 */
+  --card-background: rgba(255, 255, 255, 0.8); /* 使用标准rgba格式 */
+  --muted: #6b7280 ; /* 柔和文本色：用于次要信息 */
+  --border: rgba(0, 0, 0, 0.1); /* 边框色：浅色模式 */
 }
 
 /* 暗色主题样式 */
 .dark {
-  --background: #0a0a0a; /* 暗色主题背景色：深黑色 */
+  --background: #0a0a1a;
   --foreground: #ededed; /* 暗色主题前景色：浅灰色 */
   --primary: #3b82f6; /* 暗色主题主色调：蓝色 */
   --secondary: #fbbf24; /* 暗色主题次色调：黄色 */
+  --card-background: rgba(219, 219, 219, 0.5); /* 暗色主题卡片背景色：深灰色 */
+  --muted: #9ca3af; /* 暗色模式下的柔和文本色 */
+  --border: rgba(255, 255, 255, 0.1); /* 暗色模式边框色 */
 }
 
 /* 配置 Tailwind CSS 主题变量
@@ -37,17 +49,18 @@ html, body {
 @theme inline {
   --color-background: var(--background); /* 背景色主题变量 */
   --color-foreground: var(--foreground); /* 前景色主题变量 */
+  --color-primary: var(--primary); /* 主色调主题变量 */
+  --color-secondary: var(--secondary); /* 次色调主题变量 */
+  --color-card-background: var(--card-background); /* 卡片背景色主题变量 */
+  --color-muted: var(--muted); /* 柔和文本色主题变量 */
+  --color-border: var(--border); /* 边框色主题变量 */
   --font-sans: var(--font-geist-sans); /* 无衬线字体变量 */
   --font-mono: var(--font-geist-mono); /* 等宽字体变量 */
 }
 
-/* 暗色主题媒体查询
-   当用户系统设置为暗色主题时自动应用 */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a; /* 暗色主题背景色：深黑色 */
-    --foreground: #ededed; /* 暗色主题前景色：浅灰色 */
-  }
+/* 添加滚动和过渡优化 */
+html {
+  scroll-behavior: smooth;
 }
 
 /* 全局 body 样式设置 */
@@ -57,36 +70,37 @@ body {
   font-family: Arial, Helvetica, sans-serif; /* 设置后备字体 */
   width: 100%; /* 确保body宽度不超过视口 */
   min-height: 100vh; /* 最小高度为视口高度 */
-}
-
-/* 添加滚动和过渡优化 */
-html {
-  scroll-behavior: smooth;
-}
-
-/* 防止页面滚动时出现空白和弹性滚动 */
-body {
-  overscroll-behavior: none;
-  background-color: #fffeee;
+  overscroll-behavior: none; /* 防止页面滚动时出现空白和弹性滚动 */
+  /* 主题切换过渡效果 */
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
 }
 
 /* 自定义过渡动画类 */
 .transition-all {
   transition-property: all;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 500ms;
+  transition-duration: 300ms;
 }
 
-/* 自定义滚动条样式 */
+/* 自定义滚动条样式 - 浅色主题 */
 ::-webkit-scrollbar {
   width: 3px;
-
 }
 ::-webkit-scrollbar-track {
   background: #f1f1f1;
 }
 ::-webkit-scrollbar-thumb {
-  background: #6b6400fb;
+  background: #8b7500; /* 使用修正后的secondary颜色 */
+}
+
+/* 自定义滚动条样式 - 暗色主题 */
+.dark ::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #4a5568;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #718096;
 }
 
 /* 文章页面交互组件样式 */
@@ -100,4 +114,144 @@ body {
 
 .back-to-top:not(.hidden) {
   display: flex;
+}
+
+/* 自定义动画类 - 用于内容管理页面 */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in-from-top {
+  from {
+    transform: translateY(-1rem);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in-from-left {
+  from {
+    transform: translateX(-1rem);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in-from-right {
+  from {
+    transform: translateX(1rem);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in-from-bottom {
+  from {
+    transform: translateY(1rem);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-in {
+  animation-name: fade-in;
+  animation-duration: 0.5s;
+  animation-timing-function: ease-out;
+  animation-fill-mode: both;
+}
+
+.fade-in {
+  animation-name: fade-in;
+}
+
+
+
+/* Markdown 链接逆时针边框动画 */
+@keyframes markdown-link-border-show {
+  /* 逆时针出现：上 -> 左 -> 下 -> 右 */
+  0% {
+    clip-path: polygon(0 0, 0 0, 0 0, 0 0);
+  }
+  25% {
+    clip-path: polygon(0 0, 100% 0, 0 0, 0 0); /* 上边框 */
+  }
+  50% {
+    clip-path: polygon(0 0, 100% 0, 0 100%, 0 0); /* 上+左 */
+  }
+  75% {
+    clip-path: polygon(0 0, 100% 0, 0 100%, 0 100%); /* 上+左+下 */
+  }
+  100% {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); /* 完整边框 */
+  }
+}
+
+@keyframes markdown-link-border-hide {
+  /* 逆时针消失：右 -> 下 -> 左 -> 上 */
+  0% {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  }
+  25% {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 100% 100%); /* 移除右 */
+  }
+  50% {
+    clip-path: polygon(0 0, 100% 0, 0 100%, 100% 100%); /* 移除右+下 */
+  }
+  75% {
+    clip-path: polygon(0 0, 100% 0, 0 100%, 0 0); /* 移除右+下+左 */
+  }
+  100% {
+    clip-path: polygon(0 0, 0 0, 0 0, 0 0); /* 完全消失 */
+  }
+}
+
+.markdown-link {
+  position: relative;
+  display: inline-block;
+  color: var(--secondary);
+  text-decoration: none;
+  padding: 2px;
+  transition: color 0.3s ease;
+}
+
+.markdown-link::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border: 2px solid var(--secondary);
+  clip-path: polygon(0 0, 0 0, 0 0, 0 0);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+/* Hover 时逆时针出现边框 */
+.markdown-link:hover::before {
+  opacity: 1;
+  animation: markdown-link-border-show 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* 移除 hover 时逆时针消失 */
+.markdown-link:not(:hover)::before {
+  animation: markdown-link-border-hide 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }

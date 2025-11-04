@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { articleStorage, categoryStorage } from '../../../../lib/storage';
-import { ResponseUtils } from '../../../../lib/utils/middleware';
-import { validateRequest, idSchema } from '../../../../lib/utils/validation';
-import { logRequest, withErrorHandling } from '../../../../lib/utils/helpers';
+import { articleStorage, categoryStorage } from '@/lib/storage';
+import { ResponseUtils } from '@/lib/utils/middleware';
+import { withAuth } from '@/lib/utils/authMiddleware';
+import { validateRequest, idSchema } from '@/lib/utils/validation';
+import { logRequest, withErrorHandling } from '@/lib/utils/helpers';
 
 // 获取单个文章
 export const GET = withErrorHandling(async (req: NextRequest, { params }: { params: { id: string } }) => {
@@ -46,3 +47,25 @@ export const GET = withErrorHandling(async (req: NextRequest, { params }: { para
 
   return ResponseUtils.success(articleWithCategory);
 });
+
+// 删除文章（需要认证）
+export const DELETE = withErrorHandling(
+  withAuth(async (req: NextRequest, user, { params }: { params: { id: string } }) => {
+    logRequest(req, `DELETE /api/articles/${params.id}`);
+
+    const validation = validateRequest(idSchema, { id: params.id });
+    if (!validation.success) {
+      return ResponseUtils.error('无效的文章ID');
+    }
+
+    const article = await articleStorage.findById(params.id);
+    if (!article) {
+      return ResponseUtils.notFound('文章不存在');
+    }
+
+    // 删除文章
+    await articleStorage.delete(params.id);
+
+    return ResponseUtils.success(null, '文章删除成功');
+  })
+);

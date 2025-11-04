@@ -23,8 +23,6 @@ const ArrowAnimation = ({ onClick }: { onClick: () => void }) => {
     </div>
   )
 }
-// 网站统计数据（已在组件中设置默认值，这里可以根据需要传入具体数值）
-
 
 
 export default function Home() {
@@ -105,6 +103,7 @@ export default function Home() {
       window.removeEventListener('wheel', handleWheel);
     };
   }, [handleWheel]);
+  
   return (
     <div className="font-sans flex flex-col items-center justify-items-center min-h-screen w-full">
 
@@ -124,7 +123,7 @@ export default function Home() {
           </div>
         </div>
         {/* 首页初始显示区域 */}
-        <div className="relative flex flex-col items-center justify-center gap-4 min-h-screen min-w-screen text-center text-white ">
+        <div className="relative flex flex-col items-center justify-center gap-4 min-h-screen min-w-screen text-center ">
           {/* 标题区域 */}
           <div className="relative flex flex-col items-center justify-center gap-4 min-h-screen min-w-screen text-center text-white ">
             {/* 主标题 */}
@@ -155,8 +154,7 @@ export default function Home() {
 
         {/* 主要内容区 */}
         {isExpanded && (
-          <div className="relative flex items-start justify-center w-full text-center gap-8 
-          bg-[#fffeee]">
+          <div className="relative flex items-start justify-center w-full text-center gap-8 bg-background ">
 
             {/* 侧边栏 - 固定定位 */}
             {isExpanded && (

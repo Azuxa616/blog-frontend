@@ -52,7 +52,7 @@ export default function BlogItem({
     console.log('title', title);
     console.log('coverImage', coverImage);
     return (
-        <div className={`min-h-60 bg-white/80 backdrop-blur-sm border border-white/20 shadow-xl rounded-2xl  hover:shadow-2xl transition-all duration-300 flex min-w-96 justify-between items-center  gap-4`}>
+        <div className={`min-h-60 bg-card-background backdrop-blur-sm border border-white/20 shadow-xl rounded-2xl  hover:shadow-2xl transition-all duration-300 flex min-w-96 justify-between items-center  gap-4`}>
 
 
             {/* 封面图片 */}
@@ -62,21 +62,21 @@ export default function BlogItem({
             <div className="flex flex-col flex-1 gap-3 justify-center items-start h-full mx-5">
                 {/* 标题和分类 */}
                 <div className="flex items-start justify-between gap-3">
-                    <h3 className="text-base font-bold text-gray-900 line-clamp-2 flex-1 leading-tight">
+                    <h3 className="text-2xl font-bold text-foreground line-clamp-2 flex-1 leading-tight">
                         {title}
                     </h3>
-                    <span className="flex-shrink-0 px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
+                    <span className="flex-shrink-0 px-2 py-1 bg-primary text-white text-xs font-medium rounded-full">
                         {category}
                     </span>
                 </div>
 
                 {/* 描述 */}
-                <p className="text-start text-gray-600 text-sm line-clamp-2 leading-relaxed">
+                <p className="text-start text-muted text-sm line-clamp-2 leading-relaxed">
                     {description}
                 </p>
 
                 {/* 发布时间和浏览量 */}
-                <div className="flex items-center gap-3 text-xs text-gray-500 mt-auto">
+                <div className="flex items-center gap-3 text-xs text-muted mt-auto">
                     <span className="flex items-center gap-1">
                         <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />

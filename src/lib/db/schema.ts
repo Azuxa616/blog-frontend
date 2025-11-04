@@ -53,6 +53,16 @@ export const articleTags = sqliteTable('article_tags', {
   createdAt: text('created_at').notNull(),
 });
 
+// 用户表（仅站长）
+export const users = sqliteTable('users', {
+  id: text('id').primaryKey(),
+  username: text('username').notNull().unique(),
+  password: text('password').notNull(), // bcrypt加密后的密码
+  lastLoginAt: text('last_login_at'),
+  createdAt: text('created_at').notNull(),
+  updatedAt: text('updated_at').notNull(),
+});
+
 // 索引
 export const articlesSlugIdx = sql`CREATE INDEX articles_slug_idx ON articles(slug)`;
 export const articlesStatusIdx = sql`CREATE INDEX articles_status_idx ON articles(status)`;
@@ -62,3 +72,4 @@ export const categoriesSlugIdx = sql`CREATE INDEX categories_slug_idx ON categor
 export const tagsSlugIdx = sql`CREATE INDEX tags_slug_idx ON tags(slug)`;
 export const articleTagsArticleIdx = sql`CREATE INDEX article_tags_article_idx ON article_tags(article_id)`;
 export const articleTagsTagIdx = sql`CREATE INDEX article_tags_tag_idx ON article_tags(tag_id)`;
+export const usersUsernameIdx = sql`CREATE INDEX users_username_idx ON users(username)`;

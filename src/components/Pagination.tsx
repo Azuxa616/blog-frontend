@@ -77,7 +77,7 @@ export default function Pagination({
                         onClick={() => onPageChange(pageNumber)}
                         className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                             currentPage === pageNumber
-                                ? 'bg-[#254889] text-white shadow-lg mt-[-10px]'
+                                ? 'bg-primary text-white shadow-lg mt-[-10px]'
                                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                         }`}
                         aria-label={`第 ${pageNumber} 页`}

@@ -10,8 +10,7 @@ interface AdminLayoutProps {
 
 const navigation = [
     { name: '仪表板', href: '/admin/dashboard', icon: '📊' },
-    { name: '文章管理', href: '/admin/articles', icon: '📝' },
-    { name: '分类管理', href: '/admin/categories', icon: '🏷️' },
+    { name: '内容管理', href: '/admin/content', icon: '📚' },
     { name: '系统设置', href: '/admin/settings', icon: '⚙️' },
 ]
 
@@ -51,7 +50,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                     {/* 导航菜单 */}
                     <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
                         {navigation.map((item) => {
-                            const isActive = pathname === item.href
+                            // 对于内容管理，同时匹配 /admin/content, /admin/articles, /admin/categories
+                            const isActive = pathname === item.href || 
+                                (item.href === '/admin/content' && (pathname === '/admin/articles' || pathname === '/admin/categories'))
                             return (
                                 <Link
                                     key={item.name}

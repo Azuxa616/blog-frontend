@@ -2,7 +2,8 @@
 
 import Link from 'next/link';
 import { Category } from '@/types/category';
-
+import Card from './Card';
+    
 interface CategoryFilterProps {
   categories: (Category & { articleCount: number })[];
   selectedCategory?: string;
@@ -66,14 +67,17 @@ export default function CategoryFilter({
   };
 
   return (
-    <div className="mb-6">
+    <Card className="mb-6 flex flex-col gap-4">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-bold text-gray-800">分类筛选</h3>
+        <h3 className="text-lg font-bold text-foreground ">分类</h3>
         {/* 重置按钮 - 仅在有分类筛选时显示 */}
         {selectedCategory !== 'all' && selectedCategory && (
           <Link
             href={buildUrl('all')}
-            className="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-800 rounded-full transition-colors duration-200"
+            className="px-3 py-1 text-sm bg-primary text-white
+             hover:bg-gray-200 
+              hover:text-gray-800 
+              rounded-full "
           >
             重置筛选
           </Link>
@@ -90,9 +94,9 @@ export default function CategoryFilter({
             <Link
               key={category.id}
               href={buildUrl(category.id)}
-              className={`transition-all duration-200 hover:opacity-80 ${
+              className={`font-bold transition-all duration-200 hover:opacity-80 px-2 py-1 rounded-full ${
                 isSelected
-                  ? 'font-bold text-[#254889]'
+                  ? ' text-white bg-primary  '
                   : `${colorClass} hover:text-opacity-80`
               }`}
               style={{
@@ -105,6 +109,6 @@ export default function CategoryFilter({
           );
         })}
       </div>
-    </div>
+    </Card>
   );
 }

@@ -26,7 +26,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
     : undefined;
 
   return (
-    <article className="min-h-screen bg-white">
+    <article className="min-h-screen bg-background">
       {/* 封面图片和标题 */}
       <ImageHeaderBar
         mode="article"
@@ -39,10 +39,8 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
       />
 
       {/* 文章内容 */}
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="prose prose-lg max-w-none">
+      <div className="max-w-4xl mx-auto px-10 py-8 prose prose-lg bg-card-background bg-opacity-50">
           {renderMarkdownWithComponents(article.content)}
-        </div>
       </div>
 
       {/* 客户端交互功能（阅读进度条、回到顶部按钮等） */}

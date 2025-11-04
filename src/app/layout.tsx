@@ -3,6 +3,7 @@ import type { Metadata } from "next"; // 导入 Next.js 元数据类型定义
 import { Geist, Geist_Mono } from "next/font/google"; // 导入 Google Fonts
 import "./globals.css"; // 导入全局样式文件
 import RootLayoutClient from "@/components/RootLayoutClient";
+import ThemeScript from "@/components/ThemeScript";
 
 // 配置 Geist Sans 字体 - 主要用于正文字体
 const geistSans = Geist({
@@ -30,7 +31,12 @@ export default function RootLayout({
 }) {
   return (
     // HTML 根元素，设置页面语言为英语
-    <html lang="zh-CN">
+    // suppressHydrationWarning: 主题脚本会在客户端设置 dark 类，导致服务端和客户端不一致
+    <html lang="zh-CN" suppressHydrationWarning>
+      <head>
+        {/* 主题初始化脚本，必须在样式加载前执行，防止 FOUC */}
+        <ThemeScript />
+      </head>
       {/* 页面主体，应用字体变量和抗锯齿样式 */}
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-w-screen `}

@@ -1,9 +1,11 @@
 import { db } from '../db';
-import { articles, categories, tags, articleTags } from '../db/schema';
+import { articles, categories, tags, articleTags, users } from '../db/schema';
 import { eq, and, like, desc, asc, sql, or } from 'drizzle-orm';
 import { Article, ArticleQueryParams } from '../../types/article';
 import { Category } from '../../types/category';
 import { Tag } from '../../types/tag';
+import { User } from '../../types/auth';
+import { hashPassword } from '../utils/auth';
 
 // 辅助函数：从标签输入中提取标签名称数组
 function extractTagNames(tagsInput: string[] | Tag[] | undefined): string[] {
@@ -533,6 +535,106 @@ export class SQLiteStorage {
     }
 
     return slug;
+  }
+
+  // ==================== 用户相关方法 ====================
+
+  /**
+   * 根据用户名获取用户
+   */
+  async getUserByUsername(username: string): Promise<User | null> {
+    const result = await db.select().from(users).where(eq(users.username, username)).limit(1);
+    if (result.length === 0) return null;
+    
+    const dbUser = result[0];
+    return {
+      id: dbUser.id,
+      username: dbUser.username,
+      email: '', // 简化用户表，不需要email字段
+      isActive: true,
+      lastLoginAt: dbUser.lastLoginAt ? new Date(dbUser.lastLoginAt) : undefined,
+      createdAt: new Date(dbUser.createdAt),
+      updatedAt: new Date(dbUser.updatedAt),
+    };
+  }
+
+  /**
+   * 获取用户密码哈希（用于验证）
+   */
+  async getUserPasswordHash(username: string): Promise<string | null> {
+    const result = await db.select({ password: users.password })
+      .from(users)
+      .where(eq(users.username, username))
+      .limit(1);
+    
+    return result.length > 0 ? result[0].password : null;
+  }
+
+  /**
+   * 创建用户
+   */
+  async createUser(username: string, password: string): Promise<User> {
+    const now = new Date().toISOString();
+    const id = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const passwordHash = await hashPassword(password);
+
+    await db.insert(users).values({
+      id,
+      username,
+      password: passwordHash,
+      createdAt: now,
+      updatedAt: now,
+    });
+
+    return {
+      id,
+      username,
+      email: '',
+      isActive: true,
+      createdAt: new Date(now),
+      updatedAt: new Date(now),
+    };
+  }
+
+  /**
+   * 更新密码
+   */
+  async updatePassword(username: string, newPassword: string): Promise<void> {
+    const passwordHash = await hashPassword(newPassword);
+    const now = new Date().toISOString();
+
+    await db.update(users)
+      .set({
+        password: passwordHash,
+        updatedAt: now,
+      })
+      .where(eq(users.username, username));
+  }
+
+  /**
+   * 更新最后登录时间
+   */
+  async updateLastLogin(username: string): Promise<void> {
+    const now = new Date().toISOString();
+
+    await db.update(users)
+      .set({
+        lastLoginAt: now,
+        updatedAt: now,
+      })
+      .where(eq(users.username, username));
+  }
+
+  /**
+   * 检查用户是否存在
+   */
+  async userExists(username: string): Promise<boolean> {
+    const result = await db.select({ id: users.id })
+      .from(users)
+      .where(eq(users.username, username))
+      .limit(1);
+    
+    return result.length > 0;
   }
 }
 

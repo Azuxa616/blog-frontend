@@ -5,6 +5,12 @@ import { useDarkMode } from '../contexts/DarkModeContext';
 export default function FloatingActionButton() {
   const { isDarkMode, toggleDarkMode } = useDarkMode();
   const [isVisible, setIsVisible] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  // 避免 hydration mismatch：客户端挂载后再显示主题相关的内容
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // 监听滚动事件，控制组件显示/隐藏
   useEffect(() => {
@@ -64,9 +70,10 @@ export default function FloatingActionButton() {
         <button
           onClick={toggleDarkMode}
           className="w-12 h-12 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center group"
-          aria-label={isDarkMode ? '切换到浅色模式' : '切换到深色模式'}
+          aria-label={mounted && isDarkMode ? '切换到浅色模式' : '切换到深色模式'}
+          suppressHydrationWarning
         >
-          {isDarkMode ? (
+          {mounted && isDarkMode ? (
             <svg
               className="w-5 h-5 text-gray-600 dark:text-gray-300 group-hover:text-gray-800 dark:group-hover:text-gray-100 transition-colors"
               fill="none"

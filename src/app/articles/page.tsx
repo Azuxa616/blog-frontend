@@ -148,7 +148,7 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
     };
 
     return (
-        <div className="min-h-screen bg-[#fffeee]">
+        <div className="min-h-screen bg-background">
             <ImageHeaderBar
                 src="/imgs/index-bg-img-04.png"
                 title="文章"
@@ -159,31 +159,30 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
             <div className="w-full max-w-7xl mx-auto px-4 py-8">
                 <div className="flex flex-col lg:flex-row gap-8">
                     {/* 侧边栏 */}
-                    <div className="lg:w-80 flex-shrink-0">
-                        <div className="flex flex-col gap-6">
+                    <div className="flex flex-col gap-6 lg:w-80 flex-shrink-0">
                             {/* 搜索框 */}
-                            <Card>
                                 <div className="flex flex-col gap-4">
-                                    <h3 className="text-lg font-bold text-gray-800">搜索文章</h3>
+                                
                                     <form method="GET" className="relative">
                                         <input
                                             type="text"
                                             name="search"
                                             placeholder="输入关键词搜索..."
                                             defaultValue={searchTerm}
-                                            className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                            className="w-full px-4 py-2 
+                                            border border-gray-200 rounded-lg bg-card-background
+                                            focus:outline-none focus:ring-2 
+                                            focus:ring-primary focus:border-transparent"
                                         />
                                         <button type="submit" className="absolute right-3 top-2.5" title="搜索">
                                             <svg className="w-5 h-5 text-gray-400 hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                             </svg>
                                         </button>
-                                        {/* 保持其他参数 */}
 
                                         {sortType !== 'latest' && <input type="hidden" name="sort" value={sortType} />}
                                     </form>
                                 </div>
-                            </Card>
 
                             {/* 分类筛选器 */}
                             <CategoryFilter
@@ -192,20 +191,19 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
                                 searchTerm={searchTerm}
                                 sortType={sortType}
                             />
-                        </div>
                     </div>
 
                     {/* 主内容区 */}
                     <div className="flex-1">
                         {/* 结果统计 */}
                         <div className="mb-6">
-                            <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                            <h2 className="text-2xl font-bold text-foreground mb-2">
                                 {selectedCategory && selectedCategory !== 'all'
                                     ? categoriesWithCount.find(c => c.id === selectedCategory)?.name || selectedCategory
                                     : '所有文章'
                                 }
                             </h2>
-                            <p className="text-gray-600">
+                            <p className="text-muted">
                                 共找到 {articles.length} 篇文章
                                 {searchTerm && `，包含关键词"${searchTerm}"`}
                             </p>
@@ -268,7 +266,7 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
                                             href={buildUrl({ page: pageNum })}
                                             className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                                                 currentPage === pageNum
-                                                    ? 'bg-[#254889] text-white shadow-lg'
+                                                    ? 'bg-primary text-white shadow-lg'
                                                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                                             }`}
                                             aria-label={`第 ${pageNum} 页`}

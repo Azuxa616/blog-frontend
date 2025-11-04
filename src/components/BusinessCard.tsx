@@ -6,7 +6,7 @@ export default function BusinessCard() {
     return (
         <Card showBottomGradient={true}>
             {/* 内容区域 */}
-            <div className="flex flex-col items-center gap-6 w-60">
+            <div className="flex flex-col items-center gap-6 w-60 ">
                 {/* 头像区域 */}
                 <div className="relative -mt-24">
                     <div className="w-32 h-32 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center shadow-lg">
@@ -14,10 +14,10 @@ export default function BusinessCard() {
                     </div>
                 </div>
 
-                {/* 姓名 */}
+                {/* 名称 */}
                 <div className="text-center">
-                    <h3 className="text-2xl font-bold text-gray-800 mb-1">Azuxa616</h3>
-                    <p className="flex gap-1 text-sm text-gray-500">
+                    <h3 className="text-2xl font-bold mb-1">Azuxa616</h3>
+                    <p className="flex gap-1 text-sm text-muted">
                         <Image
                             src="/svgs/email.svg"
                             alt="email"

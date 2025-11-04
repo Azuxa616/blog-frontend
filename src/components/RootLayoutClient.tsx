@@ -15,12 +15,14 @@ export default function RootLayoutClient({ children }: RootLayoutClientProps) {
 
   // 检查是否是管理后台路由
   const isAdminRoute = pathname?.startsWith('/admin');
-
+  const isHomeRoute = pathname==="/";
   return (
     <DarkModeProvider>
       <PageProvider>
         {/* 只在前台页面显示顶部导航 */}
-        {!isAdminRoute && <HeaderBar />}
+        {!isAdminRoute && isHomeRoute &&<HeaderBar isUseSwitch={true} />}
+        {/* 非首页路由显示毛玻璃样式头部 */}
+        {!isAdminRoute && !isHomeRoute && <HeaderBar isUseSwitch={false} />}
         {/* 动态插入子页面内容 */}
         {children}
         {/* 只在前台页面显示浮动操作按钮 */}

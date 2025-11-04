@@ -28,14 +28,12 @@ export interface UpdateUserRequest {
 }
 
 export interface LoginRequest {
-  email: string;
+  username: string;
   password: string;
 }
 
 export interface LoginResponse {
   user: Omit<User, 'password'>;
-  token: string;
-  refreshToken: string;
 }
 
 export interface RegisterRequest {

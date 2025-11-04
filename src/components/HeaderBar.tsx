@@ -14,12 +14,12 @@ const menuItems = [
 ]
 
 
-export default function HeaderBar() {
+export default function HeaderBar({isUseSwitch}: {isUseSwitch?: boolean}) {
   const { isExpanded } = usePage()
 
   const baseClasses = "fixed top-0 left-0 right-0 z-50 flex items-center justify-start w-full h-16 border px-8 gap-10 transition-colors duration-300"
-  const variantClasses = isExpanded
-    ? "bg-[#ffffffa0] text-black border-gray-200"
+  const variantClasses = (isExpanded||!isUseSwitch)
+    ? "bg-white/60 backdrop-blur-sm text-black dark:text-white border-gray-200 "
     : "bg-transparent text-white"
 
   return (
