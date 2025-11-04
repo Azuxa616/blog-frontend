@@ -1,7 +1,7 @@
 import { ApiResponse, PaginatedResponse } from './common';
 import { User, LoginResponse, RegisterRequest, LoginRequest } from './auth';
 import { Article, ArticleQueryParams, CreateArticleRequest, UpdateArticleRequest } from './article';
-import { Category, CreateCategoryRequest, UpdateCategoryRequest } from './article';
+import { Category, CreateCategoryRequest, UpdateCategoryRequest } from './category';
 // 评论相关类型已移除 - 评论系统使用第三方服务
 
 // API 响应类型
@@ -27,3 +27,4 @@ export type UpdateCategoryApiRequest = UpdateCategoryRequest;
 export * from './common';
 export * from './auth';
 export * from './article';
+export * from './category';

@@ -6,21 +6,22 @@ import { validateRequest, idSchema } from '@/lib/utils/validation';
 import { logRequest, withErrorHandling } from '@/lib/utils/helpers';
 
 // 获取单个文章
-export const GET = withErrorHandling(async (req: NextRequest, { params }: { params: { id: string } }) => {
-  logRequest(req, `GET /api/articles/${params.id}`);
+export const GET = withErrorHandling(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params;
+  logRequest(req, `GET /api/articles/${id}`);
 
-  const validation = validateRequest(idSchema, { id: params.id });
+  const validation = validateRequest(idSchema, { id });
   if (!validation.success) {
     return ResponseUtils.error('无效的文章ID');
   }
 
-  const article = await articleStorage.findById(params.id);
+  const article = await articleStorage.findById(id);
   if (!article) {
     return ResponseUtils.notFound('文章不存在');
   }
 
   // 增加浏览量
-  await articleStorage.incrementViewCount(params.id);
+  await articleStorage.incrementViewCount(id);
 
   // 获取分类信息
   const category = await categoryStorage.findById(article.categoryId);
@@ -50,21 +51,22 @@ export const GET = withErrorHandling(async (req: NextRequest, { params }: { para
 
 // 删除文章（需要认证）
 export const DELETE = withErrorHandling(
-  withAuth(async (req: NextRequest, user, { params }: { params: { id: string } }) => {
-    logRequest(req, `DELETE /api/articles/${params.id}`);
+  withAuth(async (req: NextRequest, user, { params }: { params: Promise<{ id: string }> }) => {
+    const { id } = await params;
+    logRequest(req, `DELETE /api/articles/${id}`);
 
-    const validation = validateRequest(idSchema, { id: params.id });
+    const validation = validateRequest(idSchema, { id });
     if (!validation.success) {
       return ResponseUtils.error('无效的文章ID');
     }
 
-    const article = await articleStorage.findById(params.id);
+    const article = await articleStorage.findById(id);
     if (!article) {
       return ResponseUtils.notFound('文章不存在');
     }
 
     // 删除文章
-    await articleStorage.delete(params.id);
+    await articleStorage.delete(id);
 
     return ResponseUtils.success(null, '文章删除成功');
   })

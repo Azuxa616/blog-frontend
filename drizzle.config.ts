@@ -4,7 +4,7 @@ import path from 'path';
 export default {
   schema: './src/lib/db/schema.ts',
   out: './drizzle',
-  driver: 'better-sqlite',
+  dialect: 'sqlite',
   dbCredentials: {
     url: path.join(process.cwd(), 'data', 'blog.db'),
   },

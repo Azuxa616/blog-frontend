@@ -22,6 +22,7 @@ export const articleQuerySchema = z.object({
 export const createArticleSchema = z.object({
   title: z.string().min(1, '标题不能为空').max(200, '标题不能超过200字符'),
   content: z.string().min(1, '内容不能为空'),
+  slug: z.string().max(200, 'slug不能超过200字符').optional(),
   excerpt: z.string().max(500, '摘要不能超过500字符').optional(),
   coverImage: z.string().url('封面图片必须是有效的URL').optional(),
   categoryId: z.string().min(1, '分类不能为空'),

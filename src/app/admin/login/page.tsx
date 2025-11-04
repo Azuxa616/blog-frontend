@@ -1,14 +1,13 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useState, Suspense } from 'react'
+import { useSearchParams } from 'next/navigation'
 
-export default function LoginPage() {
+function LoginForm() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const router = useRouter()
   const searchParams = useSearchParams()
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -133,6 +132,25 @@ export default function LoginPage() {
         </div>
 
       </div>
+  )
+}
 
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100 mx-auto max-w-md w-full">
+        <div className="text-center mb-8">
+          <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">站长管理中心</h1>
+          <p className="text-gray-600">加载中...</p>
+        </div>
+      </div>
+    }>
+      <LoginForm />
+    </Suspense>
   )
 }

@@ -5,11 +5,12 @@ import { logRequest, withErrorHandling } from '../../../../lib/utils/helpers';
 // 根据slug获取文章详情（使用SQLite）
 export const GET = withErrorHandling(async (
   req: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) => {
-  logRequest(req, `GET /api/articles-markdown/${params.slug}`);
+  const { slug } = await params;
+  logRequest(req, `GET /api/articles-markdown/${slug}`);
 
-  const article = await storage.getArticleBySlug(params.slug);
+  const article = await storage.getArticleBySlug(slug);
 
   if (!article) {
     return NextResponse.json(

@@ -6,17 +6,18 @@ import { withErrorHandling } from '@/lib/utils/middleware';
 
 // 更新分类（需要认证）
 export const PUT = withErrorHandling(
-  withAuth(async (req: NextRequest, user, { params }: { params: { id: string } }) => {
+  withAuth(async (req: NextRequest, user, { params }: { params: Promise<{ id: string }> }) => {
     try {
+      const { id } = await params;
       const body = await req.json();
       const { name, slug, description, color } = body;
 
-      if (!params.id) {
+      if (!id) {
         return ResponseUtils.error('分类ID不能为空', 400);
       }
 
       // 检查分类是否存在
-      const existing = await storage.getCategoryById(params.id);
+      const existing = await storage.getCategoryById(id);
       if (!existing) {
         return ResponseUtils.notFound('分类不存在');
       }
@@ -35,7 +36,7 @@ export const PUT = withErrorHandling(
       if (description !== undefined) updates.description = description;
       if (color !== undefined) updates.color = color;
 
-      const updatedCategory = await storage.updateCategory(params.id, updates);
+      const updatedCategory = await storage.updateCategory(id, updates);
 
       if (!updatedCategory) {
         return ResponseUtils.error('更新分类失败', 500);
@@ -60,14 +61,15 @@ export const PUT = withErrorHandling(
 
 // 删除分类（需要认证）
 export const DELETE = withErrorHandling(
-  withAuth(async (req: NextRequest, user, { params }: { params: { id: string } }) => {
+  withAuth(async (req: NextRequest, user, { params }: { params: Promise<{ id: string }> }) => {
     try {
-      if (!params.id) {
+      const { id } = await params;
+      if (!id) {
         return ResponseUtils.error('分类ID不能为空', 400);
       }
 
       // 检查分类是否存在
-      const category = await storage.getCategoryById(params.id);
+      const category = await storage.getCategoryById(id);
       if (!category) {
         return ResponseUtils.notFound('分类不存在');
       }
@@ -77,7 +79,7 @@ export const DELETE = withErrorHandling(
         return ResponseUtils.error('该分类下还有文章，无法删除', 400);
       }
 
-      const deleted = await storage.deleteCategory(params.id);
+      const deleted = await storage.deleteCategory(id);
       if (!deleted) {
         return ResponseUtils.error('删除分类失败', 500);
       }

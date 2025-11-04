@@ -553,8 +553,8 @@ export class SQLiteStorage {
       email: '', // 简化用户表，不需要email字段
       isActive: true,
       lastLoginAt: dbUser.lastLoginAt ? new Date(dbUser.lastLoginAt) : undefined,
-      createdAt: new Date(dbUser.createdAt),
-      updatedAt: new Date(dbUser.updatedAt),
+      createdAt: dbUser.createdAt,
+      updatedAt: dbUser.updatedAt,
     };
   }
 
@@ -591,8 +591,8 @@ export class SQLiteStorage {
       username,
       email: '',
       isActive: true,
-      createdAt: new Date(now),
-      updatedAt: new Date(now),
+      createdAt: now,
+      updatedAt: now,
     };
   }
 
