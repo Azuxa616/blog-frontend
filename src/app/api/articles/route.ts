@@ -1,71 +1,157 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { storage } from '@/lib/storage';
-import { withAuth } from '@/lib/utils/authMiddleware';
-import { ResponseUtils } from '@/lib/utils/middleware';
-import { withErrorHandling } from '@/lib/utils/middleware';
-import { ArticleStatus } from '@/types/article';
+import { getAuthUser, withAuth } from '@/lib/utils/authMiddleware';
+import { ResponseUtils, withErrorHandling } from '@/lib/utils/middleware';
+import { Article, ArticleStatus } from '@/types/article';
 import { validateRequest, createArticleSchema } from '@/lib/utils/validation';
 import { logRequest } from '@/lib/utils/helpers';
 
-export const GET = withErrorHandling(
-  withAuth(async (request: NextRequest, user) => {
-    try {
-      const { searchParams } = new URL(request.url);
-      
-      // 转换状态值（前端传递 'published'/'draft'，后端需要 'PUBLISHED'/'DRAFT'）
-      let status: ArticleStatus | undefined;
-      const statusParam = searchParams.get('status');
+interface ArticleResponseItem {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt?: string;
+  coverImage?: string;
+  status: string;
+  statusEnum: ArticleStatus;
+  publishedAt?: string;
+  publishDate: string;
+  createdAt: string;
+  updatedAt: string;
+  viewCount: number;
+  views: number;
+  categoryId: string;
+  category?: {
+    id: string;
+    name: string;
+    color?: string;
+  };
+  categoryName: string;
+  tags: string[];
+  author?: {
+    id: string;
+    username: string;
+    avatar?: string;
+  };
+  readTime?: number;
+  isRepost?: boolean;
+  originalAuthor?: string;
+  originalLink?: string;
+}
+
+function formatArticleForResponse(article: Article): ArticleResponseItem {
+  const publishSource = article.publishedAt ?? article.createdAt;
+  const publishDate = publishSource
+    ? new Date(publishSource).toISOString().split('T')[0]
+    : '';
+
+  return {
+    id: article.id,
+    title: article.title,
+    slug: article.slug,
+    excerpt: article.excerpt,
+    coverImage: article.coverImage,
+    status: article.status.toLowerCase(),
+    statusEnum: article.status,
+    publishedAt: article.publishedAt,
+    publishDate,
+    createdAt: article.createdAt,
+    updatedAt: article.updatedAt,
+    viewCount: article.viewCount,
+    views: article.viewCount,
+    categoryId: article.categoryId,
+    category: article.category
+      ? {
+          id: article.category.id,
+          name: article.category.name,
+          color: article.category.color,
+        }
+      : undefined,
+    categoryName: article.category?.name || '未分类',
+    tags: article.tags || [],
+    author: article.author
+      ? {
+          id: article.author.id,
+          username: article.author.username,
+          avatar: article.author.avatar || '/imgs/avatar.jpg',
+        }
+      : undefined,
+    readTime: article.readTime,
+    isRepost: article.isRepost,
+    originalAuthor: article.originalAuthor,
+    originalLink: article.originalLink,
+  };
+}
+
+export const GET = withErrorHandling(async (request: NextRequest) => {
+  try {
+    const { searchParams } = new URL(request.url);
+    const authUser = getAuthUser(request);
+    const isAuthenticated = Boolean(authUser);
+
+    // 未登录访问默认只返回已发布文章
+    const statusParam = searchParams.get('status');
+    let status: ArticleStatus | undefined;
+    if (isAuthenticated) {
       if (statusParam && statusParam !== 'all') {
         status = statusParam.toUpperCase() as ArticleStatus;
       }
-      
-      const params = {
-        status,
-        categoryId: searchParams.get('categoryId') || undefined,
-        search: searchParams.get('search') || undefined,
-        page: parseInt(searchParams.get('page') || '1'),
-        limit: parseInt(searchParams.get('limit') || '100'), // 管理后台显示更多
-        sortBy: (searchParams.get('sortBy') || 'createdAt') as 'createdAt' | 'publishedAt' | 'viewCount',
-        sortOrder: (searchParams.get('sortOrder') || 'desc') as 'asc' | 'desc',
-      };
-
-      const result = await storage.getArticles(params);
-      
-      // 格式化文章数据供前端使用
-      const formattedArticles = result.items.map(article => ({
-        id: article.id,
-        title: article.title,
-        category: article.category?.name || '未分类',
-        categoryId: article.categoryId,
-        status: article.status.toLowerCase(), // 转换为小写供前端使用
-        views: article.viewCount,
-        publishDate: article.publishedAt 
-          ? new Date(article.publishedAt).toISOString().split('T')[0]
-          : new Date(article.createdAt).toISOString().split('T')[0],
-        author: article.author?.username || '站长',
-        createdAt: article.createdAt,
-        updatedAt: article.updatedAt,
-      }));
-
-      return ResponseUtils.success({
-        articles: formattedArticles,
-        pagination: result.pagination,
-      });
-    } catch (error) {
-      console.error('获取文章列表失败:', error);
-      return ResponseUtils.error('获取文章列表失败', 500);
+    } else {
+      status = ArticleStatus.PUBLISHED;
     }
-  })
-);
+
+    const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
+    const requestedLimit = parseInt(
+      searchParams.get('limit') || (isAuthenticated ? '100' : '6'),
+      10
+    );
+    const limit = Math.min(
+      Number.isNaN(requestedLimit)
+        ? isAuthenticated
+          ? 100
+          : 6
+        : requestedLimit,
+      isAuthenticated ? 100 : 50
+    );
+
+    const sortBy = (searchParams.get('sortBy') || 'createdAt') as
+      | 'createdAt'
+      | 'publishedAt'
+      | 'viewCount';
+    const sortOrder = (searchParams.get('sortOrder') || 'desc') as 'asc' | 'desc';
+
+    const params = {
+      status,
+      categoryId: searchParams.get('categoryId') || undefined,
+      search: searchParams.get('search') || undefined,
+      page,
+      limit,
+      sortBy,
+      sortOrder,
+    };
+
+    const result = await storage.getArticles(params);
+    const formattedArticles = result.items.map(formatArticleForResponse);
+
+    return ResponseUtils.success({
+      articles: formattedArticles,
+      pagination: result.pagination,
+      scope: isAuthenticated ? 'admin' : 'public',
+    });
+  } catch (error) {
+    console.error('获取文章列表失败:', error);
+    return ResponseUtils.error('获取文章列表失败', 500);
+  }
+});
 
 // 创建文章（需要认证）
 export const POST = withErrorHandling(
   withAuth(async (request: NextRequest, user) => {
     logRequest(request, 'POST /api/articles');
-    
+
     try {
       const body = await request.json();
-      
+
       // 验证请求数据
       const validation = validateRequest(createArticleSchema, body);
       if (!validation.success) {
@@ -73,7 +159,7 @@ export const POST = withErrorHandling(
       }
 
       const data = validation.data;
-      
+
       // 生成slug（如果没有提供）
       let slug = data.slug;
       if (!slug) {
@@ -111,6 +197,7 @@ export const POST = withErrorHandling(
         excerpt: article.excerpt,
         coverImage: article.coverImage,
         status: article.status.toLowerCase(),
+        statusEnum: article.status,
         categoryId: article.categoryId,
         tagNames: article.tags || [],
         isRepost: article.isRepost,

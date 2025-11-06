@@ -45,6 +45,33 @@ blog-frontend/
 - Node.js 18.0 或更高版本
 - npm/yarn/pnpm/bun
 
+### 数据库配置
+
+项目使用 LibSQL (Turso) 数据库。在项目根目录创建 `.env` 文件并配置以下环境变量：
+
+```bash
+# 数据库连接 URL
+# 本地 SQLite: file:./data/blog.db
+# Turso 云数据库: libsql://your-database-name.turso.io
+DATABASE_URL=file:./data/blog.db
+
+# Turso 数据库认证令牌（仅在使用 Turso 云数据库时需要）
+# 如果使用本地 SQLite 文件，可以省略此配置
+# DATABASE_AUTH_TOKEN=your-turso-auth-token-here
+```
+
+**配置说明：**
+
+1. **本地开发环境**（推荐）：
+   - `DATABASE_URL=file:./data/blog.db`
+   - 不需要 `DATABASE_AUTH_TOKEN`
+   - 数据库文件会自动创建在 `data/blog.db`
+
+2. **Turso 云数据库**：
+   - `DATABASE_URL=libsql://your-database-name.turso.io`
+   - `DATABASE_AUTH_TOKEN=your-turso-auth-token-here`
+   - 在 [Turso 控制台](https://turso.tech/) 获取这些信息
+
 ### 安装依赖
 
 ```bash

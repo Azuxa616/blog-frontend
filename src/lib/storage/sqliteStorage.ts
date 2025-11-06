@@ -235,13 +235,15 @@ export class SQLiteStorage {
     if (updates.originalAuthor !== undefined) updateData.originalAuthor = updates.originalAuthor || null;
     if (updates.originalLink !== undefined) updateData.originalLink = updates.originalLink || null;
 
-    const result = await db
+    // LibSQL 不支持 RETURNING 子句，所以先更新，然后再查询
+    await db
       .update(articles)
       .set(updateData)
-      .where(eq(articles.id, id))
-      .returning();
+      .where(eq(articles.id, id));
 
-    if (result.length === 0) throw new Error('文章不存在');
+    // 重新查询更新后的文章
+    const updatedArticle = await this.getArticleById(id);
+    if (!updatedArticle) throw new Error('文章不存在');
 
     // 更新标签 - 只有当明确提供了标签时才更新
     if (updates.tagNames !== undefined || updates.tags !== undefined) {
@@ -252,7 +254,7 @@ export class SQLiteStorage {
     }
 
     const articleTags = await this.getArticleTags(id);
-    return convertToArticle(result[0], articleTags);
+    return convertToArticle(updatedArticle, articleTags);
   }
 
   /**
@@ -269,21 +271,45 @@ export class SQLiteStorage {
 
   /**
    * 增加浏览量
+   * 注意：如果数据库连接是只读的（如 Turso 只读副本），此操作会失败
+   * 使用 try-catch 确保失败时不影响其他操作
    */
   async incrementViewCount(id: string): Promise<Article | null> {
     const article = await this.getArticleById(id);
     if (!article) return null;
 
-    const result = await db
-      .update(articles)
-      .set({ viewCount: article.viewCount + 1 })
-      .where(eq(articles.id, id))
-      .returning();
+    try {
+      // 检查数据库 URL，如果是只读连接则跳过更新
+      const dbUrl = process.env.DATABASE_URL || '';
+      // Turso 只读副本通常使用 libsql:// 协议（不带 s）
+      // 写入需要 libsqls:// 或本地文件
+      if (dbUrl.startsWith('libsql://') && !dbUrl.startsWith('libsqls://')) {
+        // 只读连接，跳过更新
+        console.warn('检测到只读数据库连接，跳过浏览量更新');
+        return article;
+      }
 
-    if (result.length === 0) return null;
+      // 使用 Drizzle ORM 更新
+      await db
+        .update(articles)
+        .set({ 
+          viewCount: article.viewCount + 1,
+          updatedAt: new Date().toISOString()
+        })
+        .where(eq(articles.id, id));
 
-    const articleTags = await this.getArticleTags(id);
-    return convertToArticle(result[0], articleTags);
+      // 重新查询更新后的文章
+      return await this.getArticleById(id);
+    } catch (error: any) {
+      // 如果更新失败（可能是权限问题），返回原文章，不抛出错误
+      if (error?.code === 'BLOCKED' || error?.message?.includes('write permission')) {
+        console.warn('数据库写入权限不足，跳过浏览量更新:', id);
+        return article;
+      }
+      // 其他错误也静默处理
+      console.error('更新浏览量失败:', error);
+      return article;
+    }
   }
 
   /**
@@ -370,14 +396,14 @@ export class SQLiteStorage {
     if (updates.color !== undefined) updateData.color = updates.color || null;
     if (updates.articleCount !== undefined) updateData.articleCount = updates.articleCount;
     
-    const result = await db
+    // LibSQL 不支持 RETURNING 子句，所以先更新，然后再查询
+    await db
       .update(categories)
       .set(updateData)
-      .where(eq(categories.id, id))
-      .returning();
+      .where(eq(categories.id, id));
     
-    if (result.length === 0) return null;
-    return convertToCategory(result[0]);
+    // 重新查询更新后的分类
+    return await this.getCategoryById(id);
   }
 
   /**

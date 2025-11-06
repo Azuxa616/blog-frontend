@@ -3,8 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "dev:turbo": "next dev --turbopack",
+    "env:setup": "bash scripts/setup-env.sh",
+    "env:check": "bash scripts/setup-env.sh",
+    "dev": "npm run env:setup && next dev",
+    "dev:turbo": "npm run env:setup && next dev --turbopack",
     "build": "next build",
     "build:turbo": "next build --turbopack",
     "start": "next start",
@@ -12,11 +14,13 @@
     "init": "tsx -e \"import { initializeStorage } from './src/lib/storage/index.ts'; initializeStorage().then(() => console.log('存储系统初始化成功')).catch(console.error);\"",
     "init:db": "tsx scripts/init-database.ts",
     "import:articles": "tsx scripts/import-sample-articles.ts",
-    "setup": "npm run init:db && npm run import:articles"
+    "setup": "npm run init:db && npm run import:articles",
+    "hash-pwd": "tsx scripts/generate-password-hash.ts"
+
   },
   "dependencies": {
+    "@libsql/client": "^0.14.0",
     "bcryptjs": "^2.4.3",
-    "better-sqlite3": "^12.4.1",
     "chokidar": "^4.0.3",
     "cors": "^2.8.5",
     "drizzle-orm": "^0.44.7",
@@ -42,7 +46,6 @@
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
     "@types/bcryptjs": "^2.4.6",
-    "@types/better-sqlite3": "^7.6.13",
     "@types/cors": "^2.8.17",
     "@types/fs-extra": "^11.0.4",
     "@types/jsonwebtoken": "^9.0.5",
