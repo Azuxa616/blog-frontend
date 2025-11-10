@@ -1,8 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { parseMarkdownFile } from './utils/parseMarkdownFile'
-
 interface Category {
   id: string
   name: string
@@ -23,6 +21,7 @@ interface CategoryCardProps {
 
 export default function CategoryCard({ category, index, onExpand, onFileDrop }: CategoryCardProps) {
   const [isDraggingOver, setIsDraggingOver] = useState(false)
+  const accentColor = category.color || '#2563eb'
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault()
@@ -69,46 +68,52 @@ export default function CategoryCard({ category, index, onExpand, onFileDrop }: 
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
-      className={`bg-white shadow 
-      rounded-lg p-6 cursor-pointer 
-      hover:shadow-xl transition-all duration-300 ease-out 
-      transform hover:scale-105 hover:-translate-y-1 
-      active:scale-100 slide-in-from-bottom-4
-      ${isDraggingOver ? 'ring-4 ring-blue-400 ring-offset-2 scale-110 shadow-2xl' : ''}`}
+      className={`rounded-3xl border border-slate-100/80 bg-white/95 p-6 shadow-lg shadow-slate-900/5 transition-all duration-300 ease-out hover:-translate-y-1 hover:border-[var(--admin-primary)]/50 hover:shadow-2xl active:scale-[0.99] slide-in-from-bottom-4 ${
+        isDraggingOver ? 'ring-4 ring-[var(--admin-primary)]/40 ring-offset-2' : ''
+      }`}
       style={{
-        backgroundColor: category.color || '#3B82F6',
         animationDelay: `${index * 50}ms`,
-        animationFillMode: 'both'
+        animationFillMode: 'both',
+        borderColor: isDraggingOver ? accentColor : undefined,
       }}
     >
-      <div className="text-white group relative">
+      <div className="group relative text-slate-900">
         {isDraggingOver && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 rounded-lg z-10">
+          <div className="absolute inset-0 z-10 flex items-center justify-center rounded-3xl bg-black/20">
             <div className="text-center">
               <svg 
-                className="w-12 h-12 mx-auto mb-2 animate-bounce" 
+                className="mx-auto mb-2 h-12 w-12 animate-bounce text-white" 
                 fill="none" 
                 stroke="currentColor" 
                 viewBox="0 0 24 24"
               >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
               </svg>
-              <p className="text-lg font-semibold">松开以上传</p>
+              <p className="text-lg font-semibold text-white">松开以上传</p>
             </div>
           </div>
         )}
-        <h3 className="text-lg font-semibold mb-2 transition-transform duration-200 group-hover:translate-x-1">
-          {category.name}
-        </h3>
-        <p className="text-sm opacity-90 mb-3 line-clamp-2 transition-opacity duration-200 group-hover:opacity-100">
-          {category.description || '无描述'}
-        </p>
-        <div className="flex items-center justify-between">
-          <span className="text-sm opacity-80 transition-opacity duration-200 group-hover:opacity-100">
-            {category.articleCount} 篇文章
+        <div className="flex items-start justify-between">
+          <div>
+            <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Category</p>
+            <h3 className="mt-2 text-xl font-semibold transition-transform duration-200 group-hover:translate-x-1">
+              {category.name}
+            </h3>
+          </div>
+          <span
+            className="inline-flex h-10 w-10 items-center justify-center rounded-2xl text-white"
+            style={{ background: `linear-gradient(135deg, ${accentColor}, #0f172a)` }}
+          >
+            {category.name.slice(0, 1).toUpperCase()}
           </span>
+        </div>
+        <p className="mt-3 line-clamp-2 text-sm text-slate-500 transition-opacity duration-200 group-hover:text-slate-600">
+          {category.description || '暂无描述'}
+        </p>
+        <div className="mt-4 flex items-center justify-between text-sm text-slate-500">
+          <span className="font-medium text-slate-700">{category.articleCount} 篇文章</span>
           <svg 
-            className="w-5 h-5 opacity-80 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-1" 
+            className="h-5 w-5 text-slate-400 transition-all duration-200 group-hover:text-slate-600 group-hover:translate-x-1" 
             fill="none" 
             stroke="currentColor" 
             viewBox="0 0 24 24"

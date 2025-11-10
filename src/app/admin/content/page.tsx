@@ -3,8 +3,11 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { SketchPicker, ColorResult } from 'react-color'
 import AdminFloatingButton from '@/components/AdminFloatingButton'
+import Modal from '@/components/Modal'
 import CategoryCard from './CategoryCard'
+import { PageHeader } from '../_components'
 import { parseMarkdownFile } from './utils/parseMarkdownFile'
 
 interface Category {
@@ -13,6 +16,7 @@ interface Category {
   slug: string
   description: string
   color?: string
+  icon?: string
   articleCount: number
   createdAt: string
   updatedAt: string
@@ -62,11 +66,13 @@ export default function ContentPage() {
   const [editingCategory, setEditingCategory] = useState<Category | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [draggingOverCategory, setDraggingOverCategory] = useState<string | null>(null)
+  const [showColorPicker, setShowColorPicker] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
     slug: '',
     description: '',
     color: '',
+    icon: '',
   })
   const router = useRouter()
 
@@ -178,6 +184,19 @@ export default function ContentPage() {
   // 已展开的分类（用于展开区显示）
   const expandedCategoriesList = filteredCategories.filter(cat => expandedCategories.has(cat.id))
 
+  const totalArticles = categories.reduce((sum, current) => sum + current.articleCount, 0)
+  const expandedArticleCount = expandedCategoriesList.reduce(
+    (sum, current) => sum + (categoryArticles[current.id]?.length ?? 0),
+    0
+  )
+
+  const summaryCards = [
+    { label: '分类总数', value: categories.length.toString(), hint: '全部可用分类' },
+    { label: '展开中', value: expandedCategoriesList.length.toString(), hint: '当前展开面板' },
+    { label: '文章总量', value: totalArticles.toString(), hint: '含草稿与已发布' },
+    { label: '已加载文章', value: expandedArticleCount.toString(), hint: '缓存中的明细' },
+  ]
+
   // 获取状态标签
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -197,9 +216,11 @@ export default function ContentPage() {
       slug: '',
       description: '',
       color: '',
+      icon: '',
     })
     setEditingCategory(null)
     setError('')
+    setShowColorPicker(false)
   }
 
   // 打开模态框
@@ -211,6 +232,7 @@ export default function ContentPage() {
         slug: category.slug,
         description: category.description || '',
         color: category.color || '',
+        icon: category.icon || '',
       })
     } else {
       resetForm()
@@ -260,6 +282,7 @@ export default function ContentPage() {
         slug: formData.slug,
         description: formData.description || undefined,
         color: formData.color || undefined,
+        icon: formData.icon || undefined,
       }
 
       const response = await fetch(url, {
@@ -361,56 +384,101 @@ export default function ContentPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <svg className="animate-spin h-8 w-8 text-blue-500 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+      <div className="flex min-h-[40vh] items-center justify-center">
+        <div className="rounded-3xl border border-slate-200/40 bg-white/80 px-8 py-10 text-center shadow-xl shadow-slate-900/5">
+          <svg className="mx-auto h-10 w-10 animate-spin text-[var(--admin-primary)]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
           </svg>
-          <p className="mt-4 text-gray-600">加载中...</p>
+          <p className="mt-4 text-sm font-medium text-slate-600">正在同步分类与文章...</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="space-y-6">
-      {/* 页面标题 */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">内容管理</h1>
-          <p className="mt-2 text-gray-600">管理和组织您的博客分类和文章</p>
-        </div>
-      </div>
+    <div className="space-y-8">
+      <PageHeader
+        title="内容管理"
+        description="统一管理所有内容资产、分类架构与批量导入。"
+        actions={
+          <button
+            type="button"
+            onClick={() => openModal()}
+            className="rounded-2xl bg-[var(--admin-primary)] px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-blue-500/25 transition hover:bg-[var(--admin-primary-hover)]"
+          >
+            新建分类
+          </button>
+        }
+      />
 
       {/* 错误提示 */}
       {error && !isModalOpen && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+        <div className="rounded-3xl border border-red-200/60 bg-red-50/80 px-5 py-4 text-sm font-medium text-red-700 shadow-sm shadow-red-200/50">
           {error}
         </div>
       )}
 
-      {/* Filter区 */}
-      <div className="bg-white shadow rounded-lg p-6 slide-in-from-top-2">
-        <div>
-          <label htmlFor="search" className="block text-sm font-medium text-gray-700 mb-2 transition-colors duration-200">
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div className="rounded-3xl border border-slate-200/60 bg-white/80 p-6 shadow-xl shadow-slate-900/5 lg:col-span-2">
+          <label htmlFor="search" className="block text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
             搜索分类
           </label>
-          <input
-            type="text"
-            id="search"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="输入分类名称或描述..."
-            className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all duration-200 focus:shadow-md"
-          />
+          <div className="mt-3 flex flex-col gap-3 md:flex-row">
+            <div className="relative flex-1">
+              <svg className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+                <circle cx="11" cy="11" r="7" />
+                <path d="M21 21l-4.35-4.35" />
+              </svg>
+              <input
+                type="text"
+                id="search"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="输入分类名称、描述或关键字"
+                className="w-full rounded-2xl border border-slate-300/70 bg-white py-3 pl-11 pr-4 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[var(--admin-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--admin-primary)]/20"
+              />
+            </div>
+            <button
+              type="button"
+              onClick={() => setSearchTerm('')}
+              className="rounded-2xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-500 transition hover:border-slate-300 hover:text-slate-800"
+            >
+              清除
+            </button>
+          </div>
+          <p className="mt-3 text-xs text-slate-500">
+            {filteredCategories.length} 个匹配结果 · {gridCategories.length} 个待展开
+          </p>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
+          {summaryCards.map((card) => (
+            <div key={card.label} className="rounded-3xl border border-slate-200/60 bg-white/90 p-4 shadow-md shadow-slate-900/5">
+              <p className="text-xs uppercase tracking-[0.3em] text-slate-500">{card.label}</p>
+              <p className="mt-2 text-3xl font-semibold text-slate-900">{card.value}</p>
+              <p className="text-xs text-slate-500">{card.hint}</p>
+            </div>
+          ))}
         </div>
       </div>
 
       {/* 展开区 */}
       {expandedCategoriesList.length > 0 && (
-        <div className="space-y-4 slide-in-from-top-4">
-          <h2 className="text-xl font-semibold text-gray-900">已展开的分类 ({expandedCategoriesList.length})</h2>
+        <div className="space-y-6 rounded-3xl border border-slate-200/60 bg-white/95 p-6 shadow-xl shadow-slate-900/5 slide-in-from-top-4">
+          <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+            <div>
+              <h2 className="text-xl font-semibold text-slate-900">已展开的分类 ({expandedCategoriesList.length})</h2>
+              <p className="text-sm text-slate-500">拖拽 Markdown 文件到左侧面板即可完成快速导入。</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setExpandedCategories(new Set())}
+              className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-900"
+            >
+              折叠全部
+            </button>
+          </div>
           {expandedCategoriesList.map((category, index) => {
             const isDraggingOver = draggingOverCategory === category.id
             
@@ -452,7 +520,7 @@ export default function ContentPage() {
             return (
               <div
                 key={category.id}
-                className="bg-white shadow rounded-lg overflow-hidden transition-all duration-500 ease-out slide-in-from-left-4"
+                className="overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-lg shadow-slate-900/5 transition-all duration-500 ease-out slide-in-from-left-4"
                 style={{
                   animationDelay: `${index * 100}ms`,
                   animationFillMode: 'both'
@@ -461,8 +529,8 @@ export default function ContentPage() {
                 <div className="flex flex-col lg:flex-row">
                   {/* 左侧：分类信息 */}
                   <div 
-                    className={`lg:w-1/3 p-6 border-b lg:border-b-0 lg:border-r border-gray-200 bg-gray-50 relative transition-all ${
-                      isDraggingOver ? 'ring-4 ring-blue-400 ring-offset-2 bg-blue-50' : ''
+                    className={`relative lg:w-1/3 border-b border-slate-100/80 bg-slate-50/80 p-6 transition-all lg:border-b-0 lg:border-r ${
+                      isDraggingOver ? 'ring-4 ring-[var(--admin-primary)]/30 ring-offset-2 bg-blue-50' : ''
                     }`}
                     onDragOver={handleDragOver}
                     onDragLeave={handleDragLeave}
@@ -483,37 +551,38 @@ export default function ContentPage() {
                         </div>
                       </div>
                     )}
-                    <div className="flex items-start justify-between mb-4">
+                    <div className="mb-4 flex items-start justify-between">
                       <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2">{category.name}</h3>
+                        <p className="text-xs uppercase tracking-[0.3em] text-slate-400">分类</p>
+                        <h3 className="mt-2 text-lg font-semibold text-slate-900">{category.name}</h3>
                         {category.description && (
-                          <p className="text-sm text-gray-600 mb-3">{category.description}</p>
+                          <p className="mt-2 text-sm text-slate-500">{category.description}</p>
                         )}
-                        <div className="space-y-1 text-sm text-gray-500">
-                          <div>文章数量: <span className="font-medium text-gray-900">{category.articleCount}</span></div>
-                          <div>创建时间: <span className="font-medium text-gray-900">{category.createdAt}</span></div>
+                        <div className="mt-4 space-y-1 text-sm text-slate-500">
+                          <div>文章数量: <span className="font-medium text-slate-900">{category.articleCount}</span></div>
+                          <div>创建时间: <span className="font-medium text-slate-900">{category.createdAt}</span></div>
                         </div>
                       </div>
                       <button
                         onClick={() => handleCategoryCollapse(category.id)}
-                        className="ml-4 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-200 rounded-md transition-all duration-200 hover:scale-110 active:scale-95"
+                        className="ml-4 rounded-xl border border-slate-200 p-2 text-slate-400 transition hover:border-slate-300 hover:text-slate-700"
                         title="折叠"
                       >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                         </svg>
                       </button>
                     </div>
-                    <div className="flex space-x-2 mt-4">
+                    <div className="mt-4 flex space-x-3">
                       <button
                         onClick={() => openModal(category)}
-                        className="text-sm text-blue-600 hover:text-blue-900 transition-all duration-200 hover:underline hover:scale-105 active:scale-95"
+                        className="rounded-2xl border border-slate-200 px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:border-slate-300 hover:text-slate-900"
                       >
                         编辑
                       </button>
                       <button
                         onClick={() => handleDelete(category.id)}
-                        className="text-sm text-red-600 hover:text-red-900 transition-all duration-200 hover:underline hover:scale-105 active:scale-95"
+                        className="rounded-2xl border border-red-200 px-3 py-1.5 text-sm font-medium text-red-600 transition hover:border-red-300"
                       >
                         删除
                       </button>
@@ -523,26 +592,26 @@ export default function ContentPage() {
                   {/* 右侧：文章列表 */}
                   <div className="lg:w-2/3 p-6">
                     {loadingCategories.has(category.id) ? (
-                      <div className="flex items-center justify-center py-8">
-                        <svg className="animate-spin h-6 w-6 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <div className="flex items-center justify-center py-8 text-slate-500">
+                        <svg className="h-6 w-6 animate-spin text-[var(--admin-primary)]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                        <span className="ml-2 text-gray-600">加载中...</span>
+                        <span className="ml-2">加载中...</span>
                       </div>
                     ) : categoryArticles[category.id]?.length > 0 ? (
-                      <div className="space-y-2">
+                      <div className="space-y-3">
                         {categoryArticles[category.id].map((article, articleIndex) => (
                           <Link
                             key={article.id}
                             href={`/admin/articles/${article.id}/edit`}
-                            className="block p-3 border border-gray-200 rounded-md hover:bg-gray-50 hover:border-blue-300 transition-all duration-300 ease-out slide-in-from-right-2 hover:shadow-md hover:scale-[1.02] active:scale-[0.98] group"
+                            className="group block rounded-2xl border border-slate-100/80 p-4 transition-all duration-300 ease-out hover:border-[var(--admin-primary)]/40 hover:bg-slate-50/60 hover:shadow-md slide-in-from-right-2"
                             style={{
                               animationDelay: `${articleIndex * 50}ms`,
                               animationFillMode: 'both'
                             }}
                           >
-                            <div className="flex items-center justify-between">
+                            <div className="flex items-center justify-between gap-4">
                               <div className="flex-1">
                                 <div className="font-medium text-gray-900">{article.title}</div>
                                 <div className="mt-1 flex items-center space-x-4 text-sm text-gray-500">
@@ -561,6 +630,7 @@ export default function ContentPage() {
                     ) : (
                       <div className="text-center py-8 text-gray-500">
                         <p>该分类下暂无文章</p>
+                        <button onClick={()=>{}} className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">新增文章</button>
                       </div>
                     )}
                   </div>
@@ -608,15 +678,13 @@ export default function ContentPage() {
       </div>
 
       {/* 分类创建/编辑模态框 */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-            <div className="mt-3">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">
-                {editingCategory ? '编辑分类' : '新增分类'}
-              </h3>
-
-              <form onSubmit={handleSubmit} className="space-y-4">
+      <Modal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        title={editingCategory ? '编辑分类' : '新增分类'}
+        size="sm"
+      >
+        <form onSubmit={handleSubmit} className="space-y-4">
                 {/* 错误提示 */}
                 {error && (
                   <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
@@ -675,15 +743,58 @@ export default function ContentPage() {
                   <label htmlFor="color" className="block text-sm font-medium text-gray-700 mb-2">
                     颜色
                   </label>
+                  <div className="relative">
+                    <div className="flex items-center gap-2">
+                      {/* eslint-disable-next-line react/forbid-dom-props */}
+                      <div
+                        className="w-10 h-10 rounded-md border-2 border-gray-300 cursor-pointer flex-shrink-0"
+                        style={{ backgroundColor: formData.color || '#ffffff' }}
+                        onClick={() => setShowColorPicker(!showColorPicker)}
+                        title="点击选择颜色"
+                      />
+                      <input
+                        type="text"
+                        id="color"
+                        value={formData.color}
+                        onChange={(e) => setFormData(prev => ({ ...prev, color: e.target.value }))}
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                        placeholder="例如: #3B82F6 (可选)"
+                        disabled={submitting}
+                      />
+                    </div>
+                    {showColorPicker && (
+                      <>
+                        <div className="fixed inset-0 z-[60]" onClick={() => setShowColorPicker(false)} />
+                        <div className="absolute z-[70] mt-2 left-0">
+                          <SketchPicker
+                            color={formData.color || '#ffffff'}
+                            onChange={(color: ColorResult) => {
+                              setFormData(prev => ({ ...prev, color: color.hex }))
+                            }}
+                            onChangeComplete={(color: ColorResult) => {
+                              setFormData(prev => ({ ...prev, color: color.hex }))
+                            }}
+                          />
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <label htmlFor="icon" className="block text-sm font-medium text-gray-700 mb-2">
+                    图标
+                  </label>
                   <input
                     type="text"
-                    id="color"
-                    value={formData.color}
-                    onChange={(e) => setFormData(prev => ({ ...prev, color: e.target.value }))}
+                    id="icon"
+                    value={formData.icon}
+                    onChange={(e) => setFormData(prev => ({ ...prev, icon: e.target.value }))}
                     className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    placeholder="例如: #3B82F6 (可选)"
+                    placeholder="请输入图标名称或URL (可选)"
                     disabled={submitting}
                   />
+                  <p className="mt-1 text-xs text-gray-500">支持图标名称（如：home, user）或图标URL</p>
                 </div>
 
                 <div className="flex justify-end space-x-3 pt-4">
@@ -714,10 +825,7 @@ export default function ContentPage() {
                   </button>
                 </div>
               </form>
-            </div>
-          </div>
-        </div>
-      )}
+      </Modal>
 
       {/* 浮动操作按钮 */}
       <AdminFloatingButton onNewCategory={() => openModal()} />

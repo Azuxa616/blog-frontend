@@ -44,6 +44,50 @@ html, body {
   --border: rgba(255, 255, 255, 0.1); /* 暗色模式边框色 */
 }
 
+/* 中台管理界面配色方案
+   专业、现代、适合长时间工作的配色 */
+.admin {
+  /* 浅色主题 - 清爽专业 */
+  --admin-background: #f8fafc; /* 主背景：浅灰蓝色，护眼 */
+  --admin-foreground: #1e293b; /* 主文字：深蓝灰色，高对比度 */
+  --admin-sidebar: #0f172a; /* 侧边栏：深蓝灰色，专业感 */
+  --admin-sidebar-text: #e2e8f0; /* 侧边栏文字：浅灰蓝色 */
+  --admin-sidebar-hover: #1e293b; /* 侧边栏悬停：中蓝灰色 */
+  --admin-sidebar-active: #f8fafc; /* 侧边栏激活：深蓝色 */
+  --admin-primary: #2563eb; /* 主色调：专业蓝色 */
+  --admin-primary-hover: #1d4ed8; /* 主色调悬停：深蓝色 */
+  --admin-secondary: #64748b; /* 次色调：中性灰蓝色 */
+  --admin-card: #ffffff; /* 卡片背景：纯白色 */
+  --admin-card-border: #e2e8f0; /* 卡片边框：浅灰蓝色 */
+  --admin-muted: #64748b; /* 次要文字：中性灰蓝色 */
+  --admin-border: #e2e8f0; /* 边框色：浅灰蓝色 */
+  --admin-success: #10b981; /* 成功色：绿色 */
+  --admin-warning: #f59e0b; /* 警告色：橙色 */
+  --admin-error: #ef4444; /* 错误色：红色 */
+  --admin-info: #3b82f6; /* 信息色：蓝色 */
+}
+
+/* 中台暗色主题 */
+.admin.dark {
+  --admin-background: #0f172a; /* 主背景：深蓝灰色 */
+  --admin-foreground: #f1f5f9; /* 主文字：浅灰蓝色 */
+  --admin-sidebar: #020617; /* 侧边栏：极深蓝灰色 */
+  --admin-sidebar-text: #cbd5e1; /* 侧边栏文字：中灰蓝色 */
+  --admin-sidebar-hover: #1e293b; /* 侧边栏悬停：深蓝灰色 */
+  --admin-sidebar-active: #3b82f6; /* 侧边栏激活：亮蓝色 */
+  --admin-primary: #3b82f6; /* 主色调：亮蓝色 */
+  --admin-primary-hover: #2563eb; /* 主色调悬停：深蓝色 */
+  --admin-secondary: #94a3b8; /* 次色调：浅灰蓝色 */
+  --admin-card: #1e293b; /* 卡片背景：深蓝灰色 */
+  --admin-card-border: #334155; /* 卡片边框：中蓝灰色 */
+  --admin-muted: #94a3b8; /* 次要文字：浅灰蓝色 */
+  --admin-border: #334155; /* 边框色：中蓝灰色 */
+  --admin-success: #10b981; /* 成功色：绿色 */
+  --admin-warning: #f59e0b; /* 警告色：橙色 */
+  --admin-error: #ef4444; /* 错误色：红色 */
+  --admin-info: #60a5fa; /* 信息色：亮蓝色 */
+}
+
 /* 配置 Tailwind CSS 主题变量
    将自定义属性映射为 Tailwind 可以使用的主题变量 */
 @theme inline {
@@ -56,6 +100,25 @@ html, body {
   --color-border: var(--border); /* 边框色主题变量 */
   --font-sans: var(--font-geist-sans); /* 无衬线字体变量 */
   --font-mono: var(--font-geist-mono); /* 等宽字体变量 */
+  
+  /* 中台配色变量 */
+  --color-admin-background: var(--admin-background);
+  --color-admin-foreground: var(--admin-foreground);
+  --color-admin-sidebar: var(--admin-sidebar);
+  --color-admin-sidebar-text: var(--admin-sidebar-text);
+  --color-admin-sidebar-hover: var(--admin-sidebar-hover);
+  --color-admin-sidebar-active: var(--admin-sidebar-active);
+  --color-admin-primary: var(--admin-primary);
+  --color-admin-primary-hover: var(--admin-primary-hover);
+  --color-admin-secondary: var(--admin-secondary);
+  --color-admin-card: var(--admin-card);
+  --color-admin-card-border: var(--admin-card-border);
+  --color-admin-muted: var(--admin-muted);
+  --color-admin-border: var(--admin-border);
+  --color-admin-success: var(--admin-success);
+  --color-admin-warning: var(--admin-warning);
+  --color-admin-error: var(--admin-error);
+  --color-admin-info: var(--admin-info);
 }
 
 /* 添加滚动和过渡优化 */

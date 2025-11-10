@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
@@ -21,7 +21,7 @@ function LoginForm() {
         headers: {
           'Content-Type': 'application/json',
         },
-        credentials: 'include', // 确保包含Cookie
+        credentials: 'include',
         body: JSON.stringify({ username, password }),
       })
 
@@ -33,15 +33,8 @@ function LoginForm() {
         return
       }
 
-      // 登录成功，Cookie已由服务端自动设置
-      console.log('登录成功，准备跳转:', data)
-
-      // 使用 setTimeout 确保Cookie被浏览器设置后再跳转
       const redirect = searchParams.get('redirect') || '/admin/dashboard'
-
-      // 短暂延迟确保Cookie设置完成，然后进行硬跳转
       setTimeout(() => {
-        console.log('执行跳转到:', redirect)
         window.location.href = redirect
       }, 200)
     } catch (err) {
@@ -52,105 +45,119 @@ function LoginForm() {
   }
 
   return (
-    //登录卡片
-    <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100 mx-auto max-w-md w-full">
-        {/* Logo和标题 */}
-        <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">站长管理中心</h1>
-          <p className="text-gray-600">请登录您的管理员账户</p>
-        </div>
-
-        {/* 登录表单 */}
-        <form onSubmit={handleLogin} className="space-y-6">
-          {/* 用户名输入 */}
+    <div className="mx-auto w-full max-w-5xl overflow-hidden rounded-3xl border border-slate-100/10 bg-white/5 shadow-2xl shadow-slate-950/40 backdrop-blur">
+      <div className="grid gap-8 lg:grid-cols-2">
+        <div className="relative hidden flex-col justify-between bg-[var(--admin-sidebar)] px-10 py-12 text-white lg:flex">
           <div>
-            <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
-              用户名
-            </label>
-            <input
-              type="text"
-              id="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-              placeholder="请输入用户名"
-              required
-            />
+            <p className="text-xs uppercase tracking-[0.6em] text-white/60">Azuxa Admin</p>
+            <h1 className="mt-6 text-3xl font-semibold">管理中台登录</h1>
+            <p className="mt-4 text-white/70">访问站点内容、编辑工作流与系统监控。需要帮助时请联系运维团队。</p>
           </div>
-
-          {/* 密码输入 */}
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-              密码
-            </label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-              placeholder="请输入密码"
-              required
-            />
-          </div>
-
-          {/* 错误提示 */}
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
-              {error}
+          <div className="space-y-4 text-sm text-white/70">
+            <div>
+              <p className="text-xs uppercase tracking-[0.3em] text-white/50">今日概览</p>
+              <p className="mt-1 text-2xl font-semibold text-white">18,240</p>
+              <p>活跃访问 · +12.4%</p>
             </div>
-          )}
-
-          {/* 登录按钮 */}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-500 hover:bg-blue-600 disabled:bg-blue-300 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center"
-          >
-            {loading ? (
-              <>
-                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                登录中...
-              </>
-            ) : (
-              '登录'
-            )}
-          </button>
-        </form>
-
-        {/* 底部信息 */}
-        <div className="mt-8 text-center text-sm text-gray-500">
-          <p>© 2025 Azuxa&apos;s BlogSpace</p>
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+              <p className="text-xs uppercase tracking-[0.3em] text-white/60">安全提示</p>
+              <p className="mt-2 text-sm">启用双因素认证以保护高敏感操作。</p>
+            </div>
+          </div>
         </div>
 
+        <div className="px-8 py-10 text-slate-900 lg:px-12">
+          <div>
+            <p className="text-xs uppercase tracking-[0.4em] text-slate-400">欢迎回来</p>
+            <h2 className="mt-3 text-3xl font-semibold text-slate-900">登录管理中心</h2>
+            <p className="mt-2 text-sm text-slate-500">请输入管理员账号和密码。</p>
+          </div>
+
+          <form onSubmit={handleLogin} className="mt-8 space-y-5">
+            <div>
+              <label htmlFor="username" className="text-sm font-medium text-slate-600">
+                用户名
+              </label>
+              <input
+                type="text"
+                id="username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[var(--admin-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--admin-primary)]/20"
+                placeholder="请输入用户名"
+                required
+              />
+            </div>
+
+            <div>
+              <label htmlFor="password" className="text-sm font-medium text-slate-600">
+                密码
+              </label>
+              <input
+                type="password"
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[var(--admin-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--admin-primary)]/20"
+                placeholder="请输入密码"
+                required
+              />
+            </div>
+
+            {error && (
+              <div className="rounded-2xl border border-red-200/70 bg-red-50/80 px-4 py-3 text-sm text-red-700">
+                {error}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="inline-flex w-full items-center justify-center rounded-2xl bg-[var(--admin-primary)] px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 transition hover:bg-[var(--admin-primary-hover)] disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {loading ? (
+                <>
+                  <svg className="mr-2 h-5 w-5 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  登录中...
+                </>
+              ) : (
+                '登录'
+              )}
+            </button>
+          </form>
+
+          <div className="mt-10 text-center text-xs text-slate-500">
+            <p>© 2025 Azuxa&apos;s BlogSpace · 内部环境</p>
+          </div>
+        </div>
       </div>
+    </div>
+  )
+}
+
+function AuthFallback() {
+  return (
+    <div className="mx-auto w-full max-w-3xl rounded-3xl border border-slate-100/10 bg-white/5 p-12 text-center text-white shadow-2xl shadow-slate-950/40">
+      <p className="text-sm text-white/70">正在加载登录模块...</p>
+    </div>
   )
 }
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={
-      <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100 mx-auto max-w-md w-full">
-        <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">站长管理中心</h1>
-          <p className="text-gray-600">加载中...</p>
-        </div>
+    <div className="relative min-h-screen overflow-hidden bg-slate-950">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -left-20 top-10 h-72 w-72 rounded-full bg-blue-500/20 blur-[160px]" />
+        <div className="absolute bottom-0 right-0 h-80 w-80 rounded-full bg-indigo-500/20 blur-[160px]" />
       </div>
-    }>
-      <LoginForm />
-    </Suspense>
+      <div className="relative flex min-h-screen items-center justify-center px-4 py-10 text-white">
+        <Suspense fallback={<AuthFallback />}>
+          <LoginForm />
+        </Suspense>
+      </div>
+    </div>
   )
 }
