@@ -1,246 +1,200 @@
-'use client'
+﻿'use client'
 
+import { useMemo, useRef, useEffect } from 'react'
 import Link from 'next/link'
+import * as echarts from 'echarts/core'
+import { LineChart, BarChart, PieChart } from 'echarts/charts'
+import { TooltipComponent, GridComponent, LegendComponent, DatasetComponent } from 'echarts/components'
+import { CanvasRenderer } from 'echarts/renderers'
+import type { EChartsOption } from 'echarts'
 
-// 模拟数据
+import { PageHeader, OverviewCard, ChartPanel } from '../_components'
+
+echarts.use([LineChart, BarChart, PieChart, TooltipComponent, GridComponent, LegendComponent, DatasetComponent, CanvasRenderer])
+
 const stats = [
   {
-    name: '今日访客',
-    value: '1,234',
-    change: '+12%',
-    changeType: 'positive',
-    icon: '👥',
+    title: '总游客数',
+    value: '18,240',
+    trend: '',
+    trendLabel: '浏览量',
+    variant: 'warning' as const,
+    icon: (
+      <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+        <path d="M5 12a7 7 0 1113.9 2.32" opacity="0.5" />
+        <path d="M5 12v7m0 0h7" />
+        <path d="M5 19l6.5-6.5" />
+      </svg>
+    ),
   },
   {
-    name: '页面浏览量',
-    value: '5,678',
-    change: '+8%',
-    changeType: 'positive',
-    icon: '📊',
-  },
-  {
-    name: '文章总数',
-    value: '42',
-    change: '+3',
-    changeType: 'positive',
-    icon: '📝',
-  },
-  {
-    name: '分类数量',
-    value: '8',
-    change: '+1',
-    changeType: 'positive',
-    icon: '🏷️',
+    title: '已发布内容',
+    value: '54 篇文章',
+    trend: '',
+    trendLabel: '工作流',
+    variant: 'default' as const,
+    icon: (
+      <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+        <path d="M5 4h14v16H5z" opacity="0.4" />
+        <path d="M8 8h8" />
+        <path d="M8 12h6" />
+        <path d="M8 16h5" />
+      </svg>
+    ),
   },
 ]
 
-const recentArticles = [
-  { id: 1, title: 'Next.js 13+ App Router 完全指南', views: 1234, status: 'published' },
-  { id: 2, title: 'React 性能优化最佳实践', views: 987, status: 'draft' },
-  { id: 3, title: 'TypeScript 高级类型详解', views: 756, status: 'published' },
-  { id: 4, title: '现代前端开发工具链', views: 543, status: 'published' },
+const systemHealth = [
+  { label: 'CPU 使用率', value: '46%', subLabel: '8 核心', trend: '+4.6%', tone: 'text-amber-400' },
+  { label: '内存使用率', value: '63%', subLabel: '32 GB', trend: '-2.8%', tone: 'text-emerald-400' },
+  { label: '请求数/分钟', value: '1.8k', subLabel: '98分位 280ms', trend: '+9.1%', tone: 'text-blue-400' },
 ]
 
-const quickActions = [
-  {
-    name: '写新文章',
-    href: '/admin/articles/new',
-    icon: '✏️',
-    color: 'bg-blue-500 hover:bg-blue-600',
-  },
-  {
-    name: '管理分类',
-    href: '/admin/categories',
-    icon: '🏷️',
-    color: 'bg-green-500 hover:bg-green-600',
-  },
-  {
-    name: '查看评论',
-    href: '/admin/comments',
-    icon: '💬',
-    color: 'bg-purple-500 hover:bg-purple-600',
-  },
-  {
-    name: '系统设置',
-    href: '/admin/settings',
-    icon: '⚙️',
-    color: 'bg-gray-500 hover:bg-gray-600',
-  },
+
+const distributionData = [
+  { value: 38, name: '技术' },
+  { value: 22, name: '产品' },
+  { value: 18, name: '文化' },
+  { value: 12, name: '运营' },
+  { value: 10, name: '社区' },
 ]
+
+function EChartCanvas({ option, height = 320 }: { option: EChartsOption; height?: number }) {
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!ref.current) return
+    const chart = echarts.init(ref.current)
+    chart.setOption(option)
+    const handleResize = () => chart.resize()
+    window.addEventListener('resize', handleResize)
+    return () => {
+      window.removeEventListener('resize', handleResize)
+      chart.dispose()
+    }
+  }, [option])
+
+  return <div ref={ref} style={{ height }} className="w-full" />
+}
 
 export default function DashboardPage() {
+  const growthOption = useMemo<EChartsOption>(() => ({
+    grid: { left: 40, right: 20, top: 40, bottom: 30 },
+    tooltip: { trigger: 'axis', backgroundColor: '#0f172a', textStyle: { color: '#e2e8f0' }, borderColor: '#1e293b' },
+    legend: { data: ['游客数', '浏览量'], top: 0, textStyle: { color: '#64748b' } },
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+      axisLine: { lineStyle: { color: '#cbd5f5' } },
+      axisLabel: { color: '#94a3b8' },
+    },
+    yAxis: { type: 'value', axisLine: { show: false }, splitLine: { lineStyle: { color: '#e2e8f0' } }, axisLabel: { color: '#94a3b8' } },
+    series: [
+      {
+        name: '游客数',
+        type: 'line',
+        smooth: true,
+        data: [820, 932, 901, 934, 1020, 1130, 1290],
+        areaStyle: {
+          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            { offset: 0, color: 'rgba(37, 99, 235, 0.4)' },
+            { offset: 1, color: 'rgba(37, 99, 235, 0.05)' },
+          ]),
+        },
+        lineStyle: { width: 3 },
+        symbolSize: 8,
+      },
+      {
+        name: '浏览量',
+        type: 'line',
+        smooth: true,
+        data: [420, 532, 601, 734, 890, 930, 1050],
+        areaStyle: {
+          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            { offset: 0, color: 'rgba(14, 165, 233, 0.35)' },
+            { offset: 1, color: 'rgba(14, 165, 233, 0.05)' },
+          ]),
+        },
+        lineStyle: { width: 3 },
+        symbolSize: 8,
+      },
+    ],
+  }), [])
+
+
+  const requestOption = useMemo<EChartsOption>(() => ({
+    grid: { left: 30, right: 10, top: 40, bottom: 30 },
+    tooltip: { trigger: 'axis' },
+    xAxis: { type: 'category', data: ['0时', '4时', '8时', '12时', '16时', '20时'], axisLabel: { color: '#94a3b8' } },
+    yAxis: { type: 'value', axisLabel: { color: '#94a3b8' }, splitLine: { lineStyle: { color: '#e2e8f0' } } },
+    series: [
+      {
+        data: [900, 1120, 1320, 1520, 1220, 980],
+        type: 'bar',
+        barWidth: '50%',
+        itemStyle: {
+          borderRadius: 12,
+          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            { offset: 0, color: '#2563eb' },
+            { offset: 1, color: '#0ea5e9' },
+          ]),
+        },
+      },
+    ],
+  }), [])
+
   return (
     <div className="space-y-8">
-      {/* 页面标题 */}
-      <div className="border-b border-gray-200 pb-4">
-        <h1 className="text-3xl font-bold text-gray-900">仪表板</h1>
-        <p className="mt-2 text-gray-600">欢迎回来！这里是您网站的概览信息。</p>
-      </div>
+      <PageHeader
+        title="运营仪表板"
+        description="观察游客数、已发布内容和系统健康状态。"
+        actions={
+          <Link
+            href="/admin/content"
+            className="rounded-2xl bg-[var(--admin-primary)] px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-blue-500/20 transition hover:bg-[var(--admin-primary-hover)]"
+          >
+            新建条目
+          </Link>
+        }
+      />
 
-      {/* 统计卡片 */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat) => (
-          <div key={stat.name} className="bg-white overflow-hidden shadow rounded-lg">
-            <div className="p-5">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <span className="text-2xl">{stat.icon}</span>
-                </div>
-                <div className="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">
-                      {stat.name}
-                    </dt>
-                    <dd className="flex items-baseline">
-                      <div className="text-2xl font-semibold text-gray-900">
-                        {stat.value}
-                      </div>
-                      <div className={`ml-2 flex items-baseline text-sm font-semibold ${
-                        stat.changeType === 'positive'
-                          ? 'text-green-600'
-                          : 'text-red-600'
-                      }`}>
-                        <svg className={`self-center flex-shrink-0 h-4 w-4 ${
-                          stat.changeType === 'positive'
-                            ? 'text-green-500'
-                            : 'text-red-500'
-                        }`} fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d={`${
-                            stat.changeType === 'positive'
-                              ? 'M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z'
-                              : 'M14.707 10.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 12.586V5a1 1 0 012 0v7.586l2.293-2.293a1 1 0 011.414 0z'
-                          }`} clipRule="evenodd" />
-                        </svg>
-                        <span className="sr-only">
-                          {stat.changeType === 'positive' ? 'Increased' : 'Decreased'} by
-                        </span>
-                        {stat.change}
-                      </div>
-                    </dd>
-                  </dl>
-                </div>
-              </div>
-            </div>
-          </div>
+      <div className="grid gap-6 lg:grid-cols-4">
+        {stats.map((card) => (
+          <OverviewCard key={card.title} {...card} />
         ))}
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* 最近文章 */}
-        <div className="bg-white shadow rounded-lg">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-medium text-gray-900">最近文章</h3>
-              <Link
-                href="/admin/articles"
-                className="text-sm text-blue-600 hover:text-blue-500 font-medium"
-              >
-                查看全部 →
-              </Link>
-            </div>
-          </div>
-          <div className="divide-y divide-gray-200">
-            {recentArticles.map((article) => (
-              <div key={article.id} className="px-6 py-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 truncate">
-                      {article.title}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      {article.views} 次浏览
-                    </p>
-                  </div>
-                  <div className="ml-4 flex-shrink-0">
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                      article.status === 'published'
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-yellow-100 text-yellow-800'
-                    }`}>
-                      {article.status === 'published' ? '已发布' : '草稿'}
-                    </span>
-                  </div>
+        <div className="lg:col-span-2">
+          <ChartPanel title="系统健康" description="实时基础设施快照" actions={<span className="text-xs text-slate-400">自动刷新 · 30秒</span>}>
+            <div className="grid gap-4 md:grid-cols-3">
+              {systemHealth.map((item) => (
+                <div key={item.label} className="rounded-2xl border border-slate-200/60 p-4">
+                  <p className="text-xs uppercase tracking-wide text-slate-500">{item.label}</p>
+                  <p className={`mt-3 text-3xl font-semibold ${item.tone}`}>{item.value}</p>
+                  <p className="text-xs text-slate-400">{item.subLabel}</p>
+                  <p className="mt-4 text-sm font-medium text-slate-600">{item.trend}</p>
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* 快速操作 */}
-        <div className="bg-white shadow rounded-lg">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h3 className="text-lg font-medium text-gray-900">快速操作</h3>
-          </div>
-          <div className="p-6">
-            <div className="grid grid-cols-2 gap-4">
-              {quickActions.map((action) => (
-                <Link
-                  key={action.name}
-                  href={action.href}
-                  className={`flex flex-col items-center justify-center p-6 rounded-lg text-white transition-colors duration-200 ${action.color}`}
-                >
-                  <span className="text-3xl mb-3">{action.icon}</span>
-                  <span className="text-sm font-medium text-center">
-                    {action.name}
-                  </span>
-                </Link>
               ))}
             </div>
-          </div>
+          </ChartPanel>
         </div>
       </div>
 
-      {/* 系统状态 */}
-      <div className="bg-white shadow rounded-lg">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-medium text-gray-900">系统状态</h3>
+      <div className="grid gap-6 lg:grid-cols-5">
+        <div className="lg:col-span-3">
+          <ChartPanel title="用户增长" description="7天活跃与留存趋势">
+            <EChartCanvas option={growthOption} height={360} />
+          </ChartPanel>
         </div>
-        <div className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                  <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                </div>
-              </div>
-              <div className="ml-3">
-                <p className="text-sm font-medium text-gray-900">系统状态</p>
-                <p className="text-sm text-gray-500">运行正常</p>
-              </div>
-            </div>
-
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                  <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                  </svg>
-                </div>
-              </div>
-              <div className="ml-3">
-                <p className="text-sm font-medium text-gray-900">上次备份</p>
-                <p className="text-sm text-gray-500">2小时前</p>
-              </div>
-            </div>
-
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                  <svg className="w-5 h-5 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-              </div>
-              <div className="ml-3">
-                <p className="text-sm font-medium text-gray-900">在线时长</p>
-                <p className="text-sm text-gray-500">7天 12小时</p>
-              </div>
-            </div>
-          </div>
+        <div className="lg:col-span-2 space-y-6">
+          <ChartPanel title="请求吞吐量" description="每4小时窗口的边缘请求数">
+            <EChartCanvas option={requestOption} height={220} />
+          </ChartPanel>
         </div>
+
       </div>
+
+
+
     </div>
   )
 }

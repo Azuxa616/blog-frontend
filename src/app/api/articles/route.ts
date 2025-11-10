@@ -38,7 +38,11 @@ interface ArticleResponseItem {
   originalAuthor?: string;
   originalLink?: string;
 }
-
+/**
+ * 格式化文章响应数据
+ * @param article 文章数据
+ * @returns 格式化后的文章响应数据
+ */
 function formatArticleForResponse(article: Article): ArticleResponseItem {
   const publishSource = article.publishedAt ?? article.createdAt;
   const publishDate = publishSource

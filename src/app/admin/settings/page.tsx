@@ -1,14 +1,15 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import Image from 'next/image'
+import { PageHeader } from '../_components'
 
 // 模拟配置数据
 const initialSettings = {
   site: {
     name: 'Azuxa&apos;s BlogSpace',
     description: '欢迎来到我的个人博客空间，这里分享技术见解和生活感悟。',
-    keywords: '博客,技术,前段开发,React,Next.js',
+    keywords: '博客,技术,前端开发,React,Next.js',
     logo: '/imgs/avatar.jpg',
   },
   features: {
@@ -50,34 +51,35 @@ export default function SettingsPage() {
   }
 
   const tabs = [
-    { id: 'site', name: '站点设置', icon: '🌐' },
+    { id: 'site', name: '站点设置', icon: '🏠' },
     { id: 'features', name: '功能开关', icon: '⚙️' },
     { id: 'personal', name: '个人资料', icon: '👤' },
   ] as const
+  const inputClasses =
+    'w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[var(--admin-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--admin-primary)]/20'
 
   return (
-    <div className="space-y-6">
-      {/* 页面标题 */}
-      <div className="border-b border-gray-200 pb-4">
-        <h1 className="text-3xl font-bold text-gray-900">系统设置</h1>
-        <p className="mt-2 text-gray-600">配置您的网站和个人资料信息</p>
-      </div>
+    <div className="space-y-8">
+      <PageHeader
+        title="系统设置"
+        description="配置站点基础信息、功能开关与个人资料。"
+      />
 
-      <div className="bg-white shadow rounded-lg">
+      <div className="rounded-3xl border border-slate-200/60 bg-white/95 shadow-xl shadow-slate-900/5">
         {/* 选项卡导航 */}
-        <div className="border-b border-gray-200">
-          <nav className="-mb-px flex space-x-8 px-6">
+        <div className="border-b border-slate-100/80 px-6 pb-4 pt-6">
+          <nav className="flex flex-wrap gap-3">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center py-4 px-1 border-b-2 font-medium text-sm ${
+                className={`flex items-center gap-2 rounded-2xl border px-4 py-2 text-sm font-medium transition ${
                   activeTab === tab.id
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'border-[var(--admin-primary)]/60 bg-[var(--admin-primary)]/10 text-[var(--admin-primary)]'
+                    : 'border-transparent bg-slate-100 text-slate-500 hover:border-slate-200 hover:text-slate-700'
                 }`}
               >
-                <span className="mr-2">{tab.icon}</span>
+                <span>{tab.icon}</span>
                 {tab.name}
               </button>
             ))}
@@ -85,15 +87,15 @@ export default function SettingsPage() {
         </div>
 
         {/* 选项卡内容 */}
-        <div className="p-6">
+        <div className="p-6 md:p-8">
           {/* 站点设置 */}
           {activeTab === 'site' && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-lg font-medium text-gray-900 mb-4">站点基本信息</h3>
+                <h3 className="text-lg font-medium text-slate-900 mb-4">站点基本信息</h3>
                 <div className="grid grid-cols-1 gap-6">
                   <div>
-                    <label htmlFor="site-name" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="site-name" className="block text-sm font-medium text-slate-700 mb-2">
                       站点名称
                     </label>
                     <input
@@ -101,13 +103,13 @@ export default function SettingsPage() {
                       id="site-name"
                       value={settings.site.name}
                       onChange={(e) => updateSettings('site', 'name', e.target.value)}
-                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className={`${inputClasses} min-h-[120px]`}
                       placeholder="请输入站点名称"
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="site-description" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="site-description" className="block text-sm font-medium text-slate-700 mb-2">
                       站点描述
                     </label>
                     <textarea
@@ -115,13 +117,13 @@ export default function SettingsPage() {
                       rows={3}
                       value={settings.site.description}
                       onChange={(e) => updateSettings('site', 'description', e.target.value)}
-                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className={`${inputClasses} min-h-[140px]`}
                       placeholder="请输入站点描述"
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="site-keywords" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="site-keywords" className="block text-sm font-medium text-slate-700 mb-2">
                       关键词（用逗号分隔）
                     </label>
                     <input
@@ -129,13 +131,13 @@ export default function SettingsPage() {
                       id="site-keywords"
                       value={settings.site.keywords}
                       onChange={(e) => updateSettings('site', 'keywords', e.target.value)}
-                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className={inputClasses}
                       placeholder="请输入SEO关键词"
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="site-logo" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="site-logo" className="block text-sm font-medium text-slate-700 mb-2">
                       站点Logo
                     </label>
                     <input
@@ -143,7 +145,7 @@ export default function SettingsPage() {
                       id="site-logo"
                       value={settings.site.logo}
                       onChange={(e) => updateSettings('site', 'logo', e.target.value)}
-                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className={inputClasses}
                       placeholder="请输入Logo图片路径"
                     />
                     {settings.site.logo && (
@@ -171,7 +173,7 @@ export default function SettingsPage() {
           {activeTab === 'features' && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-lg font-medium text-gray-900 mb-4">功能开关</h3>
+                <h3 className="text-lg font-medium text-slate-900 mb-4">功能开关</h3>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
@@ -179,15 +181,15 @@ export default function SettingsPage() {
                         <span className="text-2xl">💬</span>
                       </div>
                       <div className="ml-3">
-                        <div className="text-sm font-medium text-gray-900">评论功能</div>
-                        <div className="text-sm text-gray-500">允许访客对文章发表评论</div>
+                        <div className="text-sm font-medium text-slate-900">评论功能</div>
+                        <div className="text-sm text-slate-500">允许访客对文章发表评论</div>
                       </div>
                     </div>
                     <button
                       type="button"
                       onClick={() => updateSettings('features', 'comments', !settings.features.comments)}
                       className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                        settings.features.comments ? 'bg-blue-600' : 'bg-gray-200'
+                        settings.features.comments ? 'bg-[var(--admin-primary)]' : 'bg-gray-200'
                       }`}
                       aria-label={`评论功能 ${settings.features.comments ? '已开启' : '已关闭'}`}
                     >
@@ -203,15 +205,15 @@ export default function SettingsPage() {
                         <span className="text-2xl">🔍</span>
                       </div>
                       <div className="ml-3">
-                        <div className="text-sm font-medium text-gray-900">搜索功能</div>
-                        <div className="text-sm text-gray-500">启用站内搜索功能</div>
+                        <div className="text-sm font-medium text-slate-900">搜索功能</div>
+                        <div className="text-sm text-slate-500">启用站内搜索功能</div>
                       </div>
                     </div>
                     <button
                       type="button"
                       onClick={() => updateSettings('features', 'search', !settings.features.search)}
                       className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                        settings.features.search ? 'bg-blue-600' : 'bg-gray-200'
+                        settings.features.search ? 'bg-[var(--admin-primary)]' : 'bg-gray-200'
                       }`}
                       aria-label={`搜索功能 ${settings.features.search ? '已开启' : '已关闭'}`}
                     >
@@ -224,18 +226,18 @@ export default function SettingsPage() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
                       <div className="flex-shrink-0">
-                        <span className="text-2xl">📡</span>
+                        <span className="text-2xl">📰</span>
                       </div>
                       <div className="ml-3">
-                        <div className="text-sm font-medium text-gray-900">RSS订阅</div>
-                        <div className="text-sm text-gray-500">生成RSS订阅源</div>
+                        <div className="text-sm font-medium text-slate-900">RSS订阅</div>
+                        <div className="text-sm text-slate-500">生成RSS订阅源</div>
                       </div>
                     </div>
                     <button
                       type="button"
                       onClick={() => updateSettings('features', 'rss', !settings.features.rss)}
                       className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                        settings.features.rss ? 'bg-blue-600' : 'bg-gray-200'
+                        settings.features.rss ? 'bg-[var(--admin-primary)]' : 'bg-gray-200'
                       }`}
                       aria-label={`RSS订阅 ${settings.features.rss ? '已开启' : '已关闭'}`}
                     >
@@ -251,15 +253,15 @@ export default function SettingsPage() {
                         <span className="text-2xl">🗺️</span>
                       </div>
                       <div className="ml-3">
-                        <div className="text-sm font-medium text-gray-900">网站地图</div>
-                        <div className="text-sm text-gray-500">自动生成网站地图</div>
+                        <div className="text-sm font-medium text-slate-900">网站地图</div>
+                        <div className="text-sm text-slate-500">自动生成网站地图</div>
                       </div>
                     </div>
                     <button
                       type="button"
                       onClick={() => updateSettings('features', 'sitemap', !settings.features.sitemap)}
                       className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                        settings.features.sitemap ? 'bg-blue-600' : 'bg-gray-200'
+                        settings.features.sitemap ? 'bg-[var(--admin-primary)]' : 'bg-gray-200'
                       }`}
                       aria-label={`网站地图 ${settings.features.sitemap ? '已开启' : '已关闭'}`}
                     >
@@ -277,10 +279,10 @@ export default function SettingsPage() {
           {activeTab === 'personal' && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-lg font-medium text-gray-900 mb-4">个人信息设置</h3>
+                <h3 className="text-lg font-medium text-slate-900 mb-4">个人信息设置</h3>
                 <div className="grid grid-cols-1 gap-6">
                   <div>
-                    <label htmlFor="nickname" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="nickname" className="block text-sm font-medium text-slate-700 mb-2">
                       昵称
                     </label>
                     <input
@@ -288,13 +290,13 @@ export default function SettingsPage() {
                       id="nickname"
                       value={settings.personal.nickname}
                       onChange={(e) => updateSettings('personal', 'nickname', e.target.value)}
-                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className={inputClasses}
                       placeholder="请输入昵称"
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-2">
                       邮箱地址
                     </label>
                     <input
@@ -302,13 +304,13 @@ export default function SettingsPage() {
                       id="email"
                       value={settings.personal.email}
                       onChange={(e) => updateSettings('personal', 'email', e.target.value)}
-                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className={inputClasses}
                       placeholder="请输入邮箱地址"
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="bio" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="bio" className="block text-sm font-medium text-slate-700 mb-2">
                       个人简介
                     </label>
                     <textarea
@@ -316,7 +318,7 @@ export default function SettingsPage() {
                       rows={4}
                       value={settings.personal.bio}
                       onChange={(e) => updateSettings('personal', 'bio', e.target.value)}
-                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className={inputClasses}
                       placeholder="请输入个人简介"
                     />
                   </div>
@@ -324,41 +326,41 @@ export default function SettingsPage() {
               </div>
 
               {/* 密码修改 */}
-              <div className="border-t border-gray-200 pt-6">
-                <h3 className="text-lg font-medium text-gray-900 mb-4">密码修改</h3>
+              <div className="border-t border-slate-200 pt-6">
+                <h3 className="text-lg font-medium text-slate-900 mb-4">密码修改</h3>
                 <div className="grid grid-cols-1 gap-6">
                   <div>
-                    <label htmlFor="current-password" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="current-password" className="block text-sm font-medium text-slate-700 mb-2">
                       当前密码
                     </label>
                     <input
                       type="password"
                       id="current-password"
-                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className={inputClasses}
                       placeholder="请输入当前密码"
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="new-password" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="new-password" className="block text-sm font-medium text-slate-700 mb-2">
                       新密码
                     </label>
                     <input
                       type="password"
                       id="new-password"
-                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className={inputClasses}
                       placeholder="请输入新密码"
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="confirm-password" className="block text-sm font-medium text-slate-700 mb-2">
                       确认新密码
                     </label>
                     <input
                       type="password"
                       id="confirm-password"
-                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className={inputClasses}
                       placeholder="请再次输入新密码"
                     />
                   </div>
@@ -369,11 +371,11 @@ export default function SettingsPage() {
         </div>
 
         {/* 保存按钮 */}
-        <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end">
+        <div className="px-6 py-4 bg-slate-50 border-t border-slate-200 flex justify-end">
           <button
             onClick={handleSave}
             disabled={saving}
-            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-300"
+            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-[var(--admin-primary)] hover:bg-[var(--admin-primary-hover)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-300"
           >
             {saving ? (
               <>
