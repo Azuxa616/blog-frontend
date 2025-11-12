@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { SketchPicker, ColorResult } from 'react-color'
 import AdminFloatingButton from '@/components/AdminFloatingButton'
 import Modal from '@/components/Modal'
@@ -75,42 +75,77 @@ export default function ContentPage() {
     icon: '',
   })
   const router = useRouter()
+  const pathname = usePathname()
+  const prevPathnameRef = useRef<string>('')
 
-  // 获取分类列表
+  // 获取分类列表（提取为可复用函数）
+  const fetchCategories = async () => {
+    try {
+      setLoading(true)
+      setError('')
+
+      const response = await fetch('/api/categories', {
+        method: 'GET',
+        credentials: 'include',
+      })
+
+      const data: ApiResponse = await response.json()
+
+      if (!response.ok || !data.success) {
+        if (response.status === 401) {
+          router.push('/admin/login?redirect=/admin/content')
+          return
+        }
+        throw new Error(data.error || '获取分类列表失败')
+      }
+
+      if (data.data && Array.isArray(data.data)) {
+        setCategories(data.data)
+      }
+    } catch (err) {
+      console.error('获取分类列表错误:', err)
+      setError(err instanceof Error ? err.message : '获取分类列表失败')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // 初始加载分类列表
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        setLoading(true)
-        setError('')
+    fetchCategories()
+  }, [router])
 
-        const response = await fetch('/api/categories', {
-          method: 'GET',
-          credentials: 'include',
-        })
-
-        const data: ApiResponse = await response.json()
-
-        if (!response.ok || !data.success) {
-          if (response.status === 401) {
-            router.push('/admin/login?redirect=/admin/content')
-            return
-          }
-          throw new Error(data.error || '获取分类列表失败')
-        }
-
-        if (data.data && Array.isArray(data.data)) {
-          setCategories(data.data)
-        }
-      } catch (err) {
-        console.error('获取分类列表错误:', err)
-        setError(err instanceof Error ? err.message : '获取分类列表失败')
-      } finally {
-        setLoading(false)
+  // 页面可见性监听：当页面重新可见时刷新分类列表
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        fetchCategories()
       }
     }
 
-    fetchCategories()
-  }, [router])
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }
+  }, [])
+
+  // 路由变化监听：当从文章编辑页面返回时刷新分类列表
+  useEffect(() => {
+    const prevPathname = prevPathnameRef.current
+    
+    // 如果从文章编辑页面返回（路径包含 /admin/articles/ 且现在在 /admin/content）
+    if (prevPathname && prevPathname.includes('/admin/articles/') && pathname === '/admin/content') {
+      fetchCategories()
+      // 刷新所有已展开分类的文章列表
+      const expandedIds = Array.from(expandedCategories)
+      expandedIds.forEach(categoryId => {
+        fetchCategoryArticles(categoryId)
+      })
+    }
+    
+    prevPathnameRef.current = pathname
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname])
 
   // 获取特定分类下的文章
   const fetchCategoryArticles = async (categoryId: string) => {
@@ -131,6 +166,8 @@ export default function ContentPage() {
 
       if (response.ok && data.success && data.data && 'articles' in data.data) {
         const articlesData = data.data as { articles: Article[]; pagination: any }
+        
+        // 更新文章列表
         setCategoryArticles(prev => ({
           ...prev,
           [categoryId]: articlesData.articles
@@ -630,7 +667,7 @@ export default function ContentPage() {
                     ) : (
                       <div className="text-center py-8 text-gray-500">
                         <p>该分类下暂无文章</p>
-                        <button onClick={()=>{}} className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">新增文章</button>
+                        <button className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"><Link href="/admin/articles/new/edit">新增文章</Link></button>
                       </div>
                     )}
                   </div>

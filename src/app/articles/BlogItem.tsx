@@ -2,12 +2,14 @@
 
 import Image from "next/image";
 import { useState, useEffect } from "react";
-
 interface BlogItemProps {
     coverImage: string;
     title: string;
     description: string;
-    category: string;
+    category: {
+        name: string;
+        color?: string;
+    };
     publishDate: string;
     viewCount?: number;
 }
@@ -45,12 +47,10 @@ export default function BlogItem({
     coverImage = "",
     title = "Untitled",
     description = "No description",
-    category = "未分类",
+    category = { name: "未分类", color: "#254889" },
     publishDate = "未知时间",
     viewCount = 0
 }: BlogItemProps) {
-    console.log('title', title);
-    console.log('coverImage', coverImage);
     return (
         <div className={`min-h-60 bg-card-background backdrop-blur-sm border border-white/20 shadow-xl rounded-2xl  hover:shadow-2xl transition-all duration-300 flex min-w-96 justify-between items-center  gap-4`}>
 
@@ -65,8 +65,11 @@ export default function BlogItem({
                     <h3 className="text-2xl font-bold text-foreground line-clamp-2 flex-1 leading-tight">
                         {title}
                     </h3>
-                    <span className="flex-shrink-0 px-2 py-1 bg-primary text-white text-xs font-medium rounded-full">
-                        {category}
+                    <span 
+                        className="flex-shrink-0 px-2 py-1 text-white text-xs font-medium rounded-full"
+                        style={{ backgroundColor: category.color || "#254889" }}
+                    >
+                        {category.name}
                     </span>
                 </div>
 

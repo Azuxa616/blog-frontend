@@ -97,7 +97,6 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
     sortBy,
     sortOrder,
   });
-
   // 直接调用数据库获取分类列表
   const categories = await storage.getCategories();
 
@@ -106,7 +105,6 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
     const publishDateValue = formatDateToISO(
       article.publishedAt || article.createdAt
     );
-
     return {
       id: article.id,
       title: article.title,
@@ -256,7 +254,10 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
                       coverImage={article.coverImage || ""}
                       title={article.title}
                       description={article.excerpt || "暂无摘要"}
-                      category={article.category?.name || "未分类"}
+                      category={{
+                        name: article.category?.name || "未分类",
+                        color: article.category?.color
+                      }}
                       publishDate={
                         article.publishDate ||
                         article.publishedAt ||
