@@ -33,7 +33,7 @@ export default function AdminFloatingButton({ onNewCategory }: AdminFloatingButt
 
         {/* 新建文章按钮 */}
         <Link
-          href="/admin/articles/new"
+          href="/admin/articles/new/edit"
           onClick={() => setIsOpen(false)}
           className="flex h-14 w-14 items-center justify-center rounded-2xl border border-blue-300/40 bg-gradient-to-br from-blue-600 to-cyan-500 text-white shadow-xl shadow-blue-500/30 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-110 active:scale-95"
           title="新建文章"

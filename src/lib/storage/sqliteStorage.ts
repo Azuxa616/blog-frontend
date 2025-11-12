@@ -19,7 +19,7 @@ function extractTagNames(tagsInput: string[] | Tag[] | undefined): string[] {
 }
 
 // 类型转换辅助函数
-function convertToArticle(dbArticle: any, tags: Tag[]): Article {
+function convertToArticle(dbArticle: any, tags: Tag[], category?: Category | null): Article {
   return {
     ...dbArticle,
     excerpt: dbArticle.excerpt || undefined,
@@ -29,6 +29,7 @@ function convertToArticle(dbArticle: any, tags: Tag[]): Article {
     originalAuthor: dbArticle.originalAuthor || undefined,
     originalLink: dbArticle.originalLink || undefined,
     tags: tags.map(t => t.name),
+    category: category || undefined,
     author: typeof dbArticle.author === 'string' 
       ? { id: '', username: dbArticle.author, avatar: undefined }
       : dbArticle.author || { id: '', username: 'Unknown', avatar: undefined },
@@ -66,8 +67,9 @@ export class SQLiteStorage {
     
     const article = result[0];
     const articleTags = await this.getArticleTags(id);
+    const category = article.categoryId ? await this.getCategoryById(article.categoryId) : null;
     
-    return convertToArticle(article, articleTags);
+    return convertToArticle(article, articleTags, category);
   }
 
   /**
@@ -79,8 +81,9 @@ export class SQLiteStorage {
     
     const article = result[0];
     const articleTags = await this.getArticleTags(article.id);
+    const category = article.categoryId ? await this.getCategoryById(article.categoryId) : null;
     
-    return convertToArticle(article, articleTags);
+    return convertToArticle(article, articleTags, category);
   }
 
   /**
@@ -146,11 +149,12 @@ export class SQLiteStorage {
       .limit(limit)
       .offset(offset);
     
-    // 为每篇文章获取标签
+    // 为每篇文章获取标签和分类
     const articlesWithTags = await Promise.all(
       results.map(async (article) => {
         const articleTags = await this.getArticleTags(article.id);
-        return convertToArticle(article, articleTags);
+        const category = article.categoryId ? await this.getCategoryById(article.categoryId) : null;
+        return convertToArticle(article, articleTags, category);
       })
     );
     
@@ -212,7 +216,9 @@ export class SQLiteStorage {
       await this.setArticleTags(id, tagNames);
     }
 
-    return convertToArticle(articleData, []);
+    const articleTags = await this.getArticleTags(id);
+    const category = articleData.categoryId ? await this.getCategoryById(articleData.categoryId) : null;
+    return convertToArticle(articleData, articleTags, category);
   }
 
   /**
@@ -254,7 +260,8 @@ export class SQLiteStorage {
     }
 
     const articleTags = await this.getArticleTags(id);
-    return convertToArticle(updatedArticle, articleTags);
+    const category = updatedArticle.categoryId ? await this.getCategoryById(updatedArticle.categoryId) : null;
+    return convertToArticle(updatedArticle as any, articleTags, category);
   }
 
   /**
@@ -329,11 +336,30 @@ export class SQLiteStorage {
   // ==================== 分类相关方法 ====================
 
   /**
-   * 获取所有分类
+   * 获取所有分类（实时计算文章数量）
    */
   async getCategories(): Promise<Category[]> {
     const result = await db.select().from(categories).orderBy(asc(categories.name));
-    return result.map(convertToCategory);
+    
+    // 实时计算每个分类的文章数量
+    const categoriesWithCount = await Promise.all(
+      result.map(async (category) => {
+        // 统计该分类下的文章总数（包括所有状态）
+        const countResult = await db
+          .select({ count: sql<number>`count(*)` })
+          .from(articles)
+          .where(eq(articles.categoryId, category.id));
+        
+        const articleCount = countResult[0]?.count || 0;
+        
+        return convertToCategory({
+          ...category,
+          articleCount,
+        });
+      })
+    );
+    
+    return categoriesWithCount;
   }
 
   /**

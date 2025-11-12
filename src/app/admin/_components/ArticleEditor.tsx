@@ -92,13 +92,14 @@ const createInitialMeta = (initialData?: Partial<Article>): EditorMetaState => (
 // ==================== 子组件：顶部标题栏 ====================
 interface HeaderBarProps {
   meta: EditorMetaState
+  initialData?: Partial<Article>
   categories: Category[]
   actionState: { loading: boolean }
   onUpdateMeta: <K extends keyof EditorMetaState>(field: K, value: EditorMetaState[K]) => void
   onSubmit: () => void
 }
 
-function HeaderBar({ meta, categories, actionState, onUpdateMeta, onSubmit }: HeaderBarProps) {
+function HeaderBar({ meta, initialData, categories, actionState, onUpdateMeta, onSubmit }: HeaderBarProps) {
   // 根据文章状态动态决定按钮文本和样式
   // 草稿状态显示次要样式，发布状态显示主要样式
   const getButtonText = () => {
@@ -162,24 +163,24 @@ function HeaderBar({ meta, categories, actionState, onUpdateMeta, onSubmit }: He
           </button>
         </div>
       </div>
-      {/* 快速信息栏 */}
+      {/* 快速信息栏 - 使用 initialData（数据库中的原始数据）而不是 meta（当前编辑状态） */}
       <div className="mt-4 flex flex-wrap gap-3 text-xs">
         <div className="flex items-center gap-2 rounded-lg bg-white px-3 py-1.5 border border-slate-200">
           <span className="text-slate-500">状态:</span>
-          <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${statusStyles[meta.status]}`}>
-            {statusLabels[meta.status]}
+          <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${statusStyles[initialData?.status ?? ArticleStatus.DRAFT]}`}>
+            {statusLabels[initialData?.status ?? ArticleStatus.DRAFT]}
           </span>
         </div>
         <div className="flex items-center gap-2 rounded-lg bg-white px-3 py-1.5 border border-slate-200">
           <span className="text-slate-500">分类:</span>
           <span className="font-medium text-slate-700">
-            {categories.find(item => item.id === meta.categoryId)?.name || '未选择'}
+            {categories.find(item => item.id === initialData?.categoryId)?.name || '未选择'}
           </span>
         </div>
         <div className="flex items-center gap-2 rounded-lg bg-white px-3 py-1.5 border border-slate-200">
           <span className="text-slate-500">发布时间:</span>
           <span className="font-medium text-slate-700">
-            {meta.publishedAt ? meta.publishedAt.replace('T', ' ') : '未设置'}
+            {initialData?.publishedAt ? isoToInputValue(initialData.publishedAt).replace('T', ' ') : '未设置'}
           </span>
         </div>
       </div>
@@ -771,6 +772,7 @@ export default function ArticleEditor({
     <div className={`${containerClass} flex flex-col max-h-[calc(100vh-4rem)] overflow-hidden`}>
       <HeaderBar
         meta={meta}
+        initialData={initialData}
         categories={categories}
         actionState={actionState}
         onUpdateMeta={updateMeta}
