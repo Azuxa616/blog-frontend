@@ -2,8 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { articleStorage, categoryStorage } from '@/lib/storage';
 import { ResponseUtils } from '@/lib/utils/middleware';
 import { withAuth } from '@/lib/utils/authMiddleware';
-import { validateRequest, idSchema } from '@/lib/utils/validation';
+import { validateRequest, idSchema, updateArticleSchema } from '@/lib/utils/validation';
 import { logRequest, withErrorHandling } from '@/lib/utils/helpers';
+import { ArticleStatus } from '@/types/article';
 
 // 获取单个文章
 export const GET = withErrorHandling(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
@@ -48,6 +49,92 @@ export const GET = withErrorHandling(async (req: NextRequest, { params }: { para
 
   return ResponseUtils.success(articleWithCategory);
 });
+
+// 更新文章（需要认证）
+export const PUT = withErrorHandling(
+  withAuth(async (req: NextRequest, user, { params }: { params: Promise<{ id: string }> }) => {
+    const { id } = await params;
+    logRequest(req, `PUT /api/articles/${id}`);
+
+    // 验证文章ID
+    const idValidation = validateRequest(idSchema, { id });
+    if (!idValidation.success) {
+      return ResponseUtils.error('无效的文章ID');
+    }
+
+    // 检查文章是否存在
+    const existingArticle = await articleStorage.findById(id);
+    if (!existingArticle) {
+      return ResponseUtils.notFound('文章不存在');
+    }
+
+    try {
+      const body = await req.json();
+
+      // 验证请求数据
+      const validation = validateRequest(updateArticleSchema, body);
+      if (!validation.success) {
+        return ResponseUtils.error(validation.error, 400);
+      }
+
+      const data = validation.data;
+
+      // 构建更新数据
+      const updateData: Partial<{
+        title: string;
+        slug: string;
+        content: string;
+        excerpt?: string;
+        coverImage?: string;
+        categoryId: string;
+        status: ArticleStatus;
+        tagNames?: string[];
+        isRepost?: boolean;
+        originalAuthor?: string;
+        originalLink?: string;
+      }> = {};
+
+      if (data.title !== undefined) updateData.title = data.title;
+      if (data.slug !== undefined) updateData.slug = data.slug;
+      if (data.content !== undefined) updateData.content = data.content;
+      if (data.excerpt !== undefined) updateData.excerpt = data.excerpt;
+      if (data.coverImage !== undefined) updateData.coverImage = data.coverImage;
+      if (data.categoryId !== undefined) updateData.categoryId = data.categoryId;
+      if (data.status !== undefined) updateData.status = data.status;
+      if (data.tagNames !== undefined) updateData.tagNames = data.tagNames;
+      if (data.isRepost !== undefined) updateData.isRepost = data.isRepost;
+      if (data.originalAuthor !== undefined) updateData.originalAuthor = data.originalAuthor;
+      if (data.originalLink !== undefined) updateData.originalLink = data.originalLink;
+
+      // 更新文章
+      const updatedArticle = await articleStorage.update(id, updateData);
+
+      // 格式化返回数据
+      const formattedArticle = {
+        id: updatedArticle.id,
+        title: updatedArticle.title,
+        slug: updatedArticle.slug,
+        content: updatedArticle.content,
+        excerpt: updatedArticle.excerpt,
+        coverImage: updatedArticle.coverImage,
+        status: updatedArticle.status.toLowerCase(),
+        statusEnum: updatedArticle.status,
+        categoryId: updatedArticle.categoryId,
+        tagNames: updatedArticle.tags || [],
+        isRepost: updatedArticle.isRepost,
+        originalAuthor: updatedArticle.originalAuthor,
+        originalLink: updatedArticle.originalLink,
+        createdAt: updatedArticle.createdAt,
+        updatedAt: updatedArticle.updatedAt,
+      };
+
+      return ResponseUtils.success(formattedArticle, '文章更新成功');
+    } catch (error) {
+      console.error('更新文章失败:', error);
+      return ResponseUtils.error('更新文章失败', 500);
+    }
+  })
+);
 
 // 删除文章（需要认证）
 export const DELETE = withErrorHandling(

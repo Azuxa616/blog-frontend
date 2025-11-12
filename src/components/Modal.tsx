@@ -58,7 +58,7 @@ export default function Modal({
 
   return (
     <div
-      className="fixed inset-0 bg-gray-600 bg-opacity-60 overflow-y-auto h-full w-full z-50"
+      className="fixed inset-0 bg-[#5252523c] bg-opacity-60 overflow-y-auto h-full w-full z-50"
       onClick={(e) => {
         // 点击背景关闭
         if (e.target === e.currentTarget) {

@@ -53,23 +53,11 @@ function LoginForm() {
             <h1 className="mt-6 text-3xl font-semibold">管理中台登录</h1>
             <p className="mt-4 text-white/70">访问站点内容、编辑工作流与系统监控。需要帮助时请联系运维团队。</p>
           </div>
-          <div className="space-y-4 text-sm text-white/70">
-            <div>
-              <p className="text-xs uppercase tracking-[0.3em] text-white/50">今日概览</p>
-              <p className="mt-1 text-2xl font-semibold text-white">18,240</p>
-              <p>活跃访问 · +12.4%</p>
-            </div>
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-              <p className="text-xs uppercase tracking-[0.3em] text-white/60">安全提示</p>
-              <p className="mt-2 text-sm">启用双因素认证以保护高敏感操作。</p>
-            </div>
-          </div>
         </div>
 
         <div className="px-8 py-10 text-slate-900 lg:px-12">
           <div>
-            <p className="text-xs uppercase tracking-[0.4em] text-slate-400">欢迎回来</p>
-            <h2 className="mt-3 text-3xl font-semibold text-slate-900">登录管理中心</h2>
+            <h2 className="mt-3 text-3xl font-semibold text-white/100">欢迎回来</h2>
             <p className="mt-2 text-sm text-slate-500">请输入管理员账号和密码。</p>
           </div>
 
@@ -83,7 +71,7 @@ function LoginForm() {
                 id="username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[var(--admin-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--admin-primary)]/20"
+                className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-white/100 placeholder:text-slate-400 focus:border-[var(--admin-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--admin-primary)]/20"
                 placeholder="请输入用户名"
                 required
               />
@@ -98,7 +86,7 @@ function LoginForm() {
                 id="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[var(--admin-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--admin-primary)]/20"
+                className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-white/100 placeholder:text-slate-400 focus:border-[var(--admin-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--admin-primary)]/20"
                 placeholder="请输入密码"
                 required
               />

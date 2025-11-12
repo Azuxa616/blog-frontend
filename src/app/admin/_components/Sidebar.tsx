@@ -116,19 +116,7 @@ export function Sidebar({ isOpen, onClose, pathname }: SidebarProps) {
         ))}
       </div>
 
-      <div className="mt-6 rounded-2xl border border-white/10 bg-white/5 p-4 text-slate-200">
-        <p className="text-sm font-medium">系统健康</p>
-        <p className="mt-1 text-xs text-slate-400">CPU 45% - 内存 63%</p>
-        <div className="mt-4 flex items-center justify-between">
-          <div>
-            <p className="text-xs uppercase tracking-wide text-slate-400">安全态势</p>
-            <p className="text-lg font-semibold text-white">正常</p>
-          </div>
-          <span className="inline-flex items-center rounded-full bg-emerald-500/20 px-3 py-1 text-xs font-semibold text-emerald-300">
-            +2.4%
-          </span>
-        </div>
-      </div>
+
     </aside>
   )
 }
