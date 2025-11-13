@@ -166,7 +166,7 @@ SMTP_PORT=587
 SMTP_USER=your-email@gmail.com
 SMTP_PASS=your-app-password
 FROM_EMAIL=noreply@azuxa.com
-FROM_NAME=Azuxa's BlogSpace
+FROM_NAME=Azuxa's BlogWorld
 
 # Vercel Blob 存储配置（可选）
 BLOB_READ_WRITE_TOKEN=your-vercel-blob-token
