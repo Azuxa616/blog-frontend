@@ -5,6 +5,7 @@ import { ResponseUtils, withErrorHandling } from '@/lib/utils/middleware';
 import { Article, ArticleStatus } from '@/types/article';
 import { validateRequest, createArticleSchema } from '@/lib/utils/validation';
 import { logRequest } from '@/lib/utils/helpers';
+import { appConfig } from '@/lib/config/app';
 
 interface ArticleResponseItem {
   id: string;
@@ -187,6 +188,9 @@ export const POST = withErrorHandling(
         isRepost: data.isRepost || false,
         originalAuthor: data.originalAuthor,
         originalLink: data.originalLink,
+        author: data.author 
+          ? { id: '', username: data.author, avatar: undefined }
+          : { id: '', username: appConfig.admin.username, avatar: undefined },
       };
 
       // 创建文章

@@ -12,8 +12,8 @@ import { GeistMono } from 'geist/font/mono';
 
 // 定义应用的元数据，用于 SEO 和页面头部信息
 export const metadata: Metadata = {
-  title: "Azuxa's BlogSpace", // 页面标题，会显示在浏览器标签页
-  description: "Azuxa's BlogSpace", // 页面描述，用于搜索引擎
+  title: "Azuxa's BlogWorld", // 页面标题，会显示在浏览器标签页
+  description: "Azuxa's BlogWorld", // 页面描述，用于搜索引擎
 };
 
 // 根布局组件 - 服务端组件

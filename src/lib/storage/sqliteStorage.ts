@@ -6,6 +6,7 @@ import { Category } from '../../types/category';
 import { Tag } from '../../types/tag';
 import { User } from '../../types/auth';
 import { hashPassword } from '../utils/auth';
+import { appConfig } from '../config/app';
 
 // 辅助函数：从标签输入中提取标签名称数组
 function extractTagNames(tagsInput: string[] | Tag[] | undefined): string[] {
@@ -187,7 +188,7 @@ export class SQLiteStorage {
       coverImage: data.coverImage || null,
       status: data.status!,
       publishedAt: data.publishedAt || null,
-      author: typeof data.author === 'string' ? data.author : data.author?.username || 'Unknown',
+      author: data.author?.username || appConfig.admin.username,
       viewCount: data.viewCount || 0,
       categoryId: data.categoryId!,
       readTime: data.readTime || null,
@@ -230,6 +231,7 @@ export class SQLiteStorage {
     };
 
     if (updates.title) updateData.title = updates.title;
+    if (updates.author) updateData.author = updates.author?.username || appConfig.admin.username;
     if (updates.content) updateData.content = updates.content;
     if (updates.excerpt !== undefined) updateData.excerpt = updates.excerpt || null;
     if (updates.coverImage !== undefined) updateData.coverImage = updates.coverImage || null;
@@ -240,7 +242,7 @@ export class SQLiteStorage {
     if (updates.isRepost !== undefined) updateData.isRepost = updates.isRepost;
     if (updates.originalAuthor !== undefined) updateData.originalAuthor = updates.originalAuthor || null;
     if (updates.originalLink !== undefined) updateData.originalLink = updates.originalLink || null;
-
+    console.log('updateData', updateData)
     // LibSQL 不支持 RETURNING 子句，所以先更新，然后再查询
     await db
       .update(articles)

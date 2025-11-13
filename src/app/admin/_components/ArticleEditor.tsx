@@ -749,10 +749,12 @@ export default function ArticleEditor({
     setActionState({ loading: true })
     try {
       if (meta.status === ArticleStatus.DRAFT) {
+        // 保存草稿
         if (onSaveDraft) {
           await onSaveDraft(payload)
         }
       } else if (meta.status === ArticleStatus.PUBLISHED) {
+        // 发布文章
         if (onPublish) {
           await onPublish(payload)
         }

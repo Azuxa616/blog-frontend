@@ -5,6 +5,7 @@ import { withAuth } from '@/lib/utils/authMiddleware';
 import { validateRequest, idSchema, updateArticleSchema } from '@/lib/utils/validation';
 import { logRequest, withErrorHandling } from '@/lib/utils/helpers';
 import { ArticleStatus } from '@/types/article';
+import { appConfig } from '@/lib/config/app';
 
 // 获取单个文章
 export const GET = withErrorHandling(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
@@ -70,7 +71,6 @@ export const PUT = withErrorHandling(
 
     try {
       const body = await req.json();
-
       // 验证请求数据
       const validation = validateRequest(updateArticleSchema, body);
       if (!validation.success) {
@@ -82,6 +82,7 @@ export const PUT = withErrorHandling(
       // 构建更新数据
       const updateData: Partial<{
         title: string;
+        author?: { username: string };
         slug: string;
         content: string;
         excerpt?: string;
@@ -96,6 +97,9 @@ export const PUT = withErrorHandling(
 
       if (data.title !== undefined) updateData.title = data.title;
       if (data.slug !== undefined) updateData.slug = data.slug;
+      if (data.author !== undefined) {
+        updateData.author = { username: data.author || appConfig.admin.username };
+      }
       if (data.content !== undefined) updateData.content = data.content;
       if (data.excerpt !== undefined) updateData.excerpt = data.excerpt;
       if (data.coverImage !== undefined) updateData.coverImage = data.coverImage;

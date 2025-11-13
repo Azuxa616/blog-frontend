@@ -1,0 +1,82 @@
+name: Create Issues from CodeQL Alerts
+
+on:
+  workflow_run:
+    workflows: ["CodeQL"]
+    types:
+      - completed
+
+jobs:
+  create_issues:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      security-events: read
+
+    steps:
+      - name: Process CodeQL Alerts and Create Issues
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            // 获取所有未解决的 CodeQL Alert
+            const alerts = await github.rest.codeScanning.listAlertsForRepo({
+              owner,
+              repo,
+              state: "open"
+            });
+
+            for (const alert of alerts.data) {
+              const rule = alert.rule;
+
+              const title = `[CodeQL] ${rule.id}: ${rule.description}`;
+
+              // 避免重复 Issue
+              const existingIssues = await github.rest.search.issuesAndPullRequests({
+                q: `repo:${owner}/${repo} "${title}" in:title state:open`
+              });
+
+              if (existingIssues.data.total_count > 0) {
+                console.log(`Issue already exists: ${title}`);
+                continue;
+              }
+
+              const instance = alert.most_recent_instance;
+
+              const body = [
+                '### 🚨 CodeQL Alert Summary',
+                '',
+                '**Rule:** ' + rule.id,
+                '**Severity:** ' + rule.severity,
+                '**Description:** ' + rule.description,
+                '',
+                '---',
+                '',
+                '### 📍 Location',
+                '- **File:** ' + instance.location.path,
+                '- **Line:** ' + instance.location.startLine,
+                '',
+                '---',
+                '',
+                '### 🧾 Full Description',
+                (rule.fullDescription || '(No additional details)'),
+                '',
+                '---',
+                '',
+                '_This issue was automatically generated from CodeQL alerts._'
+              ].join('\n');
+
+              // 创建 Issue 并自动加标签 codeql
+              await github.rest.issues.create({
+                owner,
+                repo,
+                title,
+                body,
+                labels: ["codeql"]
+              });
+
+              console.log(`Created issue: ${title}`);
+            }

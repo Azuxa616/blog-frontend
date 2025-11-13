@@ -192,6 +192,7 @@ export default function ArticleEditPage() {
 
       let response: Response
       if (isNew) {
+        // console.log('isNew', submitData)
         // 新建文章：使用 POST
         response = await fetch('/api/articles', {
           method: 'POST',
@@ -202,7 +203,9 @@ export default function ArticleEditPage() {
           body: JSON.stringify(submitData),
         })
       } else {
+
         // 更新文章：使用 PUT
+        // console.log('isUpdate', submitData)
         response = await fetch(`/api/articles/${articleId}`, {
           method: 'PUT',
           headers: {
