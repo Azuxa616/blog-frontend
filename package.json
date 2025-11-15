@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@libsql/client": "^0.14.0",
+    "@octokit/rest": "^22.0.1",
     "@types/react-color": "^3.0.13",
     "@vercel/blob": "^2.0.0",
     "bcryptjs": "^2.4.3",

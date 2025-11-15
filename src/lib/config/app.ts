@@ -14,6 +14,10 @@ export const appConfig = {
     username: process.env.ADMIN_USERNAME || 'admin',
     email: process.env.ADMIN_EMAIL || 'admin@example.com',
     password: process.env.ADMIN_PASSWORD || 'admin',
+    // 清理 GitHub 用户名：去除引号、冒号和空格
+    githubName: process.env.GITHUB_NAME 
+      ? process.env.GITHUB_NAME.trim().replace(/^[:"]+|[:"]+$/g, '').trim()
+      : 'your-github-name',
   },
 
   // JWT配置
