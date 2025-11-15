@@ -1,0 +1,33 @@
+name: "CodeQL"
+
+on:
+  push:
+    branches: ["master"]
+  schedule:
+    - cron: "0 3 * * 1" # 每周一 03:00 运行
+
+jobs:
+  analyze:
+    permissions:
+      contents: read
+      security-events: write
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ['javascript']  # Typescript 也使用 javascript 分析器
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v3
+      with:
+        languages: ${{ matrix.language }}
+
+    - name: Autobuild
+      uses: github/codeql-action/autobuild@v3
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v3

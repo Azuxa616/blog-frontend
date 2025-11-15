@@ -82,6 +82,7 @@ export interface UpdateArticleRequest {
   categoryId?: string;
   tagNames?: string[];
   status?: ArticleStatus;
+  author?: string;
 
   // 转载相关字段
   isRepost?: boolean;

@@ -28,6 +28,7 @@ export const createArticleSchema = z.object({
   categoryId: z.string().min(1, '分类不能为空'),
   tagNames: z.array(z.string()).optional(),
   status: z.nativeEnum(ArticleStatus).optional(),
+  author: z.string().max(100, '作者名称不能超过100字符').optional(),
   isRepost: z.boolean().optional(),
   originalAuthor: z.string().max(100, '原作者姓名不能超过100字符').optional(),
   originalLink: z.string().url('原文章链接必须是有效的URL').optional(),

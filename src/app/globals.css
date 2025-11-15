@@ -31,6 +31,56 @@ html, body {
   --card-background: rgba(255, 255, 255, 0.8); /* 使用标准rgba格式 */
   --muted: #6b7280 ; /* 柔和文本色：用于次要信息 */
   --border: rgba(0, 0, 0, 0.1); /* 边框色：浅色模式 */
+  
+  /* GitHub Card 和 Skills Card 专用变量 - 浅色模式默认值 */
+  --text-primary: #0f172a; /* 主要文本色 (slate-900) */
+  --text-secondary: #cbd5e1; /* 次要文本色 (slate-300) */
+  --text-muted: #64748b; /* 柔和文本色 (slate-500) */
+  --text-subtle: #64748b; /* 更柔和的文本色 (slate-500) */
+  
+  --card-bg: rgba(255, 255, 255, 0.8); /* 卡片背景 */
+  --card-bg-strong: rgba(255, 255, 255, 0.9); /* 卡片背景强 */
+  --card-bg-stronger: rgba(255, 255, 255, 0.9); /* 卡片背景更强 */
+  --card-border: rgba(226, 232, 240, 0.8); /* 卡片边框 (slate-200) */
+  
+  --heatmap-empty: rgba(226, 232, 240, 0.7); /* 热力图空 (slate-200/70) */
+  --heatmap-low: rgba(209, 250, 229, 0.8); /* 热力图低 (emerald-200/80) */
+  --heatmap-medium: rgba(167, 243, 208, 0.8); /* 热力图中 (emerald-300/80) */
+  --heatmap-high: rgba(16, 185, 129, 0.8); /* 热力图高 (emerald-500/80) */
+  --heatmap-max: rgba(5, 150, 105, 1); /* 热力图最高 (emerald-600) */
+  
+  --skill-mastery-from: rgba(209, 250, 229, 0.8); /* 技能掌握渐变起始 (emerald-50/80) */
+  --skill-mastery-via: rgba(255, 255, 255, 0.7); /* 技能掌握渐变中间 (white/70) */
+  --skill-mastery-to: rgba(204, 251, 241, 0.7); /* 技能掌握渐变结束 (teal-50/70) */
+  --skill-mastery-track: rgba(209, 250, 229, 1); /* 技能掌握轨道 (emerald-200) */
+  
+  --skill-growth-from: rgba(254, 243, 199, 0.8); /* 技能成长渐变起始 (amber-50/80) */
+  --skill-growth-via: rgba(255, 255, 255, 0.7); /* 技能成长渐变中间 (white/70) */
+  --skill-growth-to: rgba(255, 237, 213, 0.7); /* 技能成长渐变结束 (orange-50/70) */
+  --skill-growth-track: rgba(253, 230, 138, 1); /* 技能成长轨道 (amber-200) */
+  
+  --card-gradient-from: rgba(255, 255, 255, 0.9); /* 卡片渐变起始 (white/90) */
+  --card-gradient-via: rgba(248, 250, 252, 0.8); /* 卡片渐变中间 (slate-50/80) */
+  --card-gradient-to: rgba(239, 246, 255, 0.6); /* 卡片渐变结束 (blue-50/60) */
+  
+  --error-bg: rgba(254, 242, 242, 1); /* 错误背景 (red-50) */
+  --error-border: rgba(254, 202, 202, 1); /* 错误边框 (red-200) */
+  --error-text: rgba(220, 38, 38, 1); /* 错误文本 (red-600) */
+  
+  --badge-emerald-bg: rgba(209, 250, 229, 0.7); /* 徽章翠绿背景 (emerald-100/70) */
+  --badge-emerald-text: rgba(4, 120, 87, 1); /* 徽章翠绿文本 (emerald-700) */
+  
+  --badge-amber-bg: rgba(254, 243, 199, 0.8); /* 徽章琥珀背景 (amber-50/80) */
+  --badge-amber-text: rgba(180, 83, 9, 1); /* 徽章琥珀文本 (amber-700) */
+  
+  --badge-slate-bg: rgba(241, 245, 249, 0.8); /* 徽章石板背景 (slate-100/80) */
+  --badge-slate-text: rgba(51, 65, 85, 1); /* 徽章石板文本 (slate-700) */
+  
+  --badge-blue-bg: rgba(239, 246, 255, 0.8); /* 徽章蓝色背景 (blue-50/80) */
+  --badge-blue-text: rgba(37, 99, 235, 1); /* 徽章蓝色文本 (blue-600) */
+  --badge-blue-dot: rgba(59, 130, 246, 1); /* 徽章蓝色点 (blue-500) */
+  
+  --blur-bg: rgba(191, 219, 254, 0.3); /* 模糊背景 (blue-200/30) */
 }
 
 /* 暗色主题样式 */
@@ -42,6 +92,56 @@ html, body {
   --card-background: rgba(219, 219, 219, 0.5); /* 暗色主题卡片背景色：深灰色 */
   --muted: #9ca3af; /* 暗色模式下的柔和文本色 */
   --border: rgba(255, 255, 255, 0.1); /* 暗色模式边框色 */
+  
+  /* GitHub Card 和 Skills Card 专用变量 */
+  --text-primary: #ffffff; /* 主要文本色 */
+  --text-secondary: #cbd5e1; /* 次要文本色 (slate-300) */
+  --text-muted: #94a3b8; /* 柔和文本色 (slate-400) */
+  --text-subtle: #64748b; /* 更柔和的文本色 (slate-500) */
+  
+  --card-bg: rgba(15, 23, 42, 0.6); /* 卡片背景 (slate-900/60) */
+  --card-bg-strong: rgba(15, 23, 42, 0.7); /* 卡片背景强 (slate-900/70) */
+  --card-bg-stronger: rgba(15, 23, 42, 0.8); /* 卡片背景更强 (slate-900/80) */
+  --card-border: rgba(30, 41, 59, 1); /* 卡片边框 (slate-800) */
+  
+  --heatmap-empty: rgba(30, 41, 59, 0.5); /* 热力图空 (slate-800/50) */
+  --heatmap-low: rgba(6, 78, 59, 0.5); /* 热力图低 (emerald-900/50) */
+  --heatmap-medium: rgba(6, 95, 70, 0.6); /* 热力图中 (emerald-800/60) */
+  --heatmap-high: rgba(16, 185, 129, 0.7); /* 热力图高 (emerald-700/70) */
+  --heatmap-max: rgba(16, 185, 129, 1); /* 热力图最高 (emerald-500) */
+  
+  --skill-mastery-from: rgba(6, 78, 59, 0.3); /* 技能掌握渐变起始 (emerald-900/30) */
+  --skill-mastery-via: rgba(2, 6, 23, 0.4); /* 技能掌握渐变中间 (slate-950/40) */
+  --skill-mastery-to: rgba(19, 78, 74, 0.3); /* 技能掌握渐变结束 (teal-950/30) */
+  --skill-mastery-track: rgba(6, 78, 59, 0.6); /* 技能掌握轨道 (emerald-900/60) */
+  
+  --skill-growth-from: rgba(120, 53, 15, 0.3); /* 技能成长渐变起始 (amber-900/30) */
+  --skill-growth-via: rgba(2, 6, 23, 0.4); /* 技能成长渐变中间 (slate-950/40) */
+  --skill-growth-to: rgba(124, 45, 18, 0.3); /* 技能成长渐变结束 (orange-950/30) */
+  --skill-growth-track: rgba(120, 53, 15, 0.6); /* 技能成长轨道 (amber-900/60) */
+  
+  --card-gradient-from: rgba(2, 6, 23, 0.8); /* 卡片渐变起始 (slate-950/80) */
+  --card-gradient-via: rgba(15, 23, 42, 0.7); /* 卡片渐变中间 (slate-900/70) */
+  --card-gradient-to: rgba(30, 27, 75, 0.4); /* 卡片渐变结束 (indigo-950/40) */
+  
+  --error-bg: rgba(127, 29, 29, 0.2); /* 错误背景 (red-900/20) */
+  --error-border: rgba(153, 27, 27, 1); /* 错误边框 (red-800) */
+  --error-text: rgba(248, 113, 113, 1); /* 错误文本 (red-400) */
+  
+  --badge-emerald-bg: rgba(16, 185, 129, 0.2); /* 徽章翠绿背景 (emerald-500/20) */
+  --badge-emerald-text: rgba(110, 231, 183, 1); /* 徽章翠绿文本 (emerald-300) */
+  
+  --badge-amber-bg: rgba(245, 158, 11, 0.2); /* 徽章琥珀背景 (amber-900/20) */
+  --badge-amber-text: rgba(253, 230, 138, 1); /* 徽章琥珀文本 (amber-300) */
+  
+  --badge-slate-bg: rgba(30, 41, 59, 0.6); /* 徽章石板背景 (slate-800/60) */
+  --badge-slate-text: rgba(203, 213, 225, 1); /* 徽章石板文本 (slate-300) */
+  
+  --badge-blue-bg: rgba(59, 130, 246, 0.2); /* 徽章蓝色背景 (blue-500/20) */
+  --badge-blue-text: rgba(147, 197, 253, 1); /* 徽章蓝色文本 (blue-300) */
+  --badge-blue-dot: rgba(147, 197, 253, 1); /* 徽章蓝色点 (blue-300) */
+  
+  --blur-bg: rgba(59, 130, 246, 0.1); /* 模糊背景 (blue-500/10) */
 }
 
 /* 中台管理界面配色方案

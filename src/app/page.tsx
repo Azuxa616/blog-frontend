@@ -1,12 +1,13 @@
 'use client'
 import Image from "next/image";
-import { useEffect, useRef, useCallback } from 'react'
+import { useEffect, useRef, useCallback, useState } from 'react'
 import Typewriter from "@/components/Typewriter";
 import BusinessCard from "@/components/BusinessCard";
 import FooterBar from "@/components/FooterBar";
 import WebStatisticDataCard from "@/components/WebStatisticDataCard";
 import BlogItem from "@/app/articles/BlogItem";
 import { usePage } from "@/contexts/PageContext";
+import GithubCard from "@/components/GithubCard";
 //背景图片下拉箭头动画
 const ArrowAnimation = ({ onClick }: { onClick: () => void }) => {
   return (
@@ -25,8 +26,36 @@ const ArrowAnimation = ({ onClick }: { onClick: () => void }) => {
 }
 
 
+interface GitHubData {
+  user: {
+    avatar_url: string;
+    name: string;
+    login: string;
+    bio: string | null;
+    followers: number;
+    following: number;
+    public_repos: number;
+  };
+  repos: Array<{
+    id: number;
+    name: string;
+    description: string | null;
+    html_url: string;
+    updated_at: string;
+    language: string | null;
+    license: {
+      name: string;
+      spdx_id: string;
+    } | null;
+    stargazers_count: number;
+  }>;
+}
+
 export default function Home() {
   const { isExpanded, setIsExpanded, isTransitioning, setIsTransitioning } = usePage()
+  const [githubData, setGithubData] = useState<GitHubData | null>(null)
+  const [githubLoading, setGithubLoading] = useState(true)
+  const [githubError, setGithubError] = useState<string | null>(null)
 
   const throttleTimer = useRef<NodeJS.Timeout>(null)
 
@@ -103,7 +132,33 @@ export default function Home() {
       window.removeEventListener('wheel', handleWheel);
     };
   }, [handleWheel]);
-  
+
+  // 获取 GitHub 数据 - 组件挂载时获取，只获取一次
+  useEffect(() => {
+    const fetchGithubData = async () => {
+      try {
+        setGithubLoading(true)
+        setGithubError(null)
+
+        const response = await fetch('/api/github')
+        const data = await response.json()
+
+        if (!response.ok) {
+          throw new Error(data.error || '获取 GitHub 数据失败')
+        }
+
+        setGithubData(data)
+      } catch (error) {
+        console.error('获取 GitHub 数据错误:', error)
+        setGithubError(error instanceof Error ? error.message : '获取 GitHub 数据失败')
+      } finally {
+        setGithubLoading(false)
+      }
+    }
+    // 组件挂载时立即获取数据
+    fetchGithubData()
+  }, [])
+
   return (
     <div className="font-sans flex flex-col items-center justify-items-center min-h-screen w-full">
 
@@ -155,15 +210,33 @@ export default function Home() {
         {/* 主要内容区 */}
         {isExpanded && (
           <div className="relative flex items-start justify-center w-full text-center gap-8 bg-background ">
-
-            {/* 侧边栏 - 固定定位 */}
             {isExpanded && (
-              <div className="flex flex-col gap-8  mt-30">
-                  <BusinessCard />
-                  <WebStatisticDataCard />
+              <div className="flex flex-col items-center justify-center p-10 gap-8 rounded-2xl my-30 bg-[url('/imgs/index-bg-img-06.png')] bg-cover">
+                {/* GitHub 卡片区域 - 始终渲染 */}
+                <GithubCard 
+                  user={githubData?.user || null}
+                  repos={githubData?.repos || []}
+                  isLoading={githubLoading}
+                  error={githubError}
+                  learned={[
+                    { name: "TypeScript", proficiency: 85, imgUrl: "/imgs/logo-ts.webp", docUrl: "https://www.typescriptlang.org/" },
+                    { name: "React", proficiency: 75, imgUrl: "/imgs/logo-react.webp", docUrl: "https://zh-hans.react.dev/" },
+                    { name: "Vue", proficiency: 65, imgUrl: "/imgs/logo-vue.webp", docUrl: "https://vuejs.org/" },
+                    { name: "Ant Design ", proficiency: 50, imgUrl: "/imgs/logo-antd.webp", docUrl: "https://ant.design/index-cn" },
+                  ]}
+                  practicing={[
+                    { name: "Next.js", proficiency: 60, imgUrl: "/imgs/logo-nextjs.webp", docUrl: "https://nextjs.org/" },
+                    { name: "Tailwind CSS", proficiency: 60, imgUrl: "/imgs/logo-tailwindcss.webp", docUrl: "https://tailwindcss.com/" },
+                    { name: "Node.js", proficiency: 70, imgUrl: "/imgs/logo-nodejs.webp", docUrl: "https://nodejs.org/" },
+                    { name: "FastApi", proficiency: 50, imgUrl: "/imgs/logo-fastapi.webp", docUrl: "https://fastapi.tiangolo.com/" }
+                  ]}
+                />
               </div>
             )}
-
+            {/* 文章导航按钮 */}
+            <div className="flex">
+              
+            </div>
           </div>
         )}
       </main>
