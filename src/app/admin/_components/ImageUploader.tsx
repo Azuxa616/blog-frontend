@@ -67,10 +67,11 @@ export default function ImageUploader(
             onUploadSuccess?.(url)
 
         } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : '上传失败'
-            setErrorMessage(errorMessage)
+            // 使用预定义的安全错误消息，避免直接显示 API 返回的内容
+            const safeErrorMessage = '上传失败，请重试'
+            setErrorMessage(safeErrorMessage)
             setStatus('error')
-            onUploadError?.(errorMessage)
+            onUploadError?.(safeErrorMessage)
         }
     }
     // 拖拽处理
@@ -112,17 +113,38 @@ export default function ImageUploader(
     // URL上传处理
     const handleUrlUpload = () => {
         //验证URL
-        if (!urlInput.trim()) {
+        const trimmedUrl = urlInput.trim()
+        if (!trimmedUrl) {
             setErrorMessage('请输入有效的图片 URL')
             setStatus('error')
             return
         }
-        // 验证 URL 格式
+        
+        // 验证 URL 格式和协议
         try {
-            new URL(urlInput.trim())
-            setImageUrl(urlInput.trim())
+            const url = new URL(trimmedUrl)
+            
+            // 协议白名单：只允许 http 和 https
+            const allowedProtocols = ['http:', 'https:']
+            if (!allowedProtocols.includes(url.protocol)) {
+                setErrorMessage('URL 必须使用 http 或 https 协议')
+                setStatus('error')
+                onUploadError?.('URL 必须使用 http 或 https 协议')
+                return
+            }
+            
+            // 验证 URL 格式（确保有有效的 hostname）
+            if (!url.hostname || url.hostname.length === 0) {
+                setErrorMessage('无效的 URL 格式')
+                setStatus('error')
+                onUploadError?.('无效的 URL 格式')
+                return
+            }
+            
+            // URL 验证通过，设置图片 URL
+            setImageUrl(trimmedUrl)
             setStatus('success')
-            onUploadSuccess?.(urlInput.trim())
+            onUploadSuccess?.(trimmedUrl)
             setUrlInput('')
             setShowUrlInput(false)
         } catch {
